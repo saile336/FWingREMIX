@@ -1,12 +1,14 @@
 const express = require('express');
 const bodyParser = require('body-parser');
 const { PrismaClient } = require('@prisma/client');
+const cors = require('cors');
 
 const app = express();
 const port = 3000;
 
 const prisma = new PrismaClient();
 
+app.use(cors());
 app.use(bodyParser.json());
 // byt ut your_table, column1, och column2 till faktiska tabeller och kolumner
 app.get('/api/getData', async (req, res) => {
