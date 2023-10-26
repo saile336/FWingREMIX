@@ -9,7 +9,8 @@ export default {
     },
 
     props: {
-        bim: String
+        bim: String,
+        currentIndex: Number,
     },
 
     methods: {
@@ -26,9 +27,6 @@ export default {
         this.fetchApi(this.bim);
     },
 
-    updated() {
-        console.log("updated");
-    },
     
 }
 
@@ -46,7 +44,7 @@ export default {
                 </div>
             </div>
         </div>
-        <img @click="$emit('toggleEvents')" id="rightArrow" src="src/assets/images/rightarrow.svg" alt="rightarrow">
+        <img @click="toggleEvents('+')" id="rightArrow" src="src/assets/images/rightarrow.svg" alt="rightarrow">
     </div>
 </template>
 

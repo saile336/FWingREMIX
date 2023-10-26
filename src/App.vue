@@ -36,13 +36,7 @@ export default {
   },
 
   methods:{
-    switchOrg(){
-      if(this.currentOrg === 0){
-        this.currentOrg = 1;
-      } else {
-        this.currentOrg = 0;
-      }
-    }
+    
   }
 }
 
@@ -55,7 +49,7 @@ export default {
     <TheClock />
   </div>
 
-  <FetchKide @toggleEvents="switchOrg" :bim="orgs[currentOrg].kideUrl" />
+  <FetchKide :bim="orgs[currentOrg].kideUrl" :currentIndex="currentOrg" />
 
 </template>
 
