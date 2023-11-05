@@ -10,5 +10,4 @@ datasource db {
 model Sample {
   id        Int      @id @default(autoincrement())
   title     String
-  completed Boolean
 }

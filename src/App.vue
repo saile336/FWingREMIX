@@ -2,6 +2,7 @@
 
 import TheClock from "./components/TheClock.vue";
 import FetchKide from "./components/FetchKide.vue";
+import DBTest from "./components/DBTest.vue";
 
 export default {
   data() {
@@ -29,14 +30,16 @@ export default {
 
     }
   },
+
   components: {
     TheClock,
     FetchKide,
+    DBTest,
 
   },
 
-  methods:{
-    
+  methods: {
+
   }
 }
 
@@ -44,13 +47,15 @@ export default {
 
 <template>
   <img id="logo" src="src/assets/images/tlklogo-white.png" alt="tlklogo">
+  <div id="dbTest">
+    <DBTest /> <!-- hidden behind other shit but connection to server works, see console-->
+  </div>
 
   <div id="theClock">
     <TheClock />
   </div>
 
   <FetchKide :bim="orgs[currentOrg].kideUrl" :currentIndex="currentOrg" />
-
 </template>
 
 <style scoped>
