@@ -21,5 +21,9 @@
     "eslint-plugin-vue": "^9.17.0",
     "prisma": "^5.5.2",
     "vite": "^4.5.0"
+  },
+  "prisma": {
+    "schema": "./prisma/schema.prisma"
   }
+  
 }
