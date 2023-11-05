@@ -105,11 +105,12 @@ const fetchKide = async () => {
   }
 };
 
+fetchKide();
 setInterval(fetchKide, 1000*60*60);
 
-app.get('/api/getKide', async (res) => {
+app.get('/api/getKide', async (req, res) => {
   const data = orgs;
-  res.json(data);
+  res.send(data);
 });
 
 app.listen(port, () => console.log(`Server is running on port ${port}`));
