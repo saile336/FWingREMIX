@@ -10,18 +10,16 @@ export default {
 
     props: {
         bim: String,
-        currentIndex: Number,
     },
 
     methods: {
-        async fetchApi(bim) {
+        async fetchApi(bam) {
             console.log("fetchApi()");
-            const res = await fetch(bim);
+            const res = await fetch(`http://localhost:3000/api/getKide/${bam}`); //Fetch by name, OBS case sensitive
             const data = await res.json();
-            this.kideData = data;
+            this.kideData = data.kideData.model;
             console.log(this.kideData);
         },
-
     },
     created() {
         this.fetchApi(this.bim);
@@ -34,9 +32,9 @@ export default {
 
 <template>
     <div class="container">
-        <h2 id="forening" v-html="kideData.model.company.name"></h2>
+        <h2 id="forening" v-html="kideData.company.name"></h2>
         <div id="events">
-            <div class="event" v-for="event in kideData.model.events" :key="event.id">
+            <div class="event" v-for="event in kideData.events" :key="event.id">
                 <img class="img" :src="imgUrl + event.mediaFilename">
                 <div class="details">
                     <div class="name">{{ event.name }}</div>
@@ -44,7 +42,6 @@ export default {
                 </div>
             </div>
         </div>
-        <img @click="toggleEvents('+')" id="rightArrow" src="src/assets/images/rightarrow.svg" alt="rightarrow">
     </div>
 </template>
 

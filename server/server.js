@@ -62,42 +62,45 @@ app.post('/api/addData', async (req, res) => {
 });
 
 
-//Kide fetch
-let orgs = [
+
+//Organisationer för kide fetch
+let orgs = {
+  TLK:
   {
-    name: "TLK",
     kideUrl: "https://api.kide.app/api/companies/8216a1bc-760d-407b-9c77-5e26a041a25c",
-    data: {}
+    kideData: {}
   },
+
+  HanSe:
   {
-    name: "HanSe SF",
     kideUrl: "https://api.kide.app/api/companies/90d58532-87be-4a30-b4e3-6053db20caa5",
-    data: {}
+    kideData: {}
   },
+
+  Commedia:
   {
-    name: "Commedia rf",
     kideUrl: "https://api.kide.app/api/companies/b7b04c01-6c49-4c74-81da-9f4147aca6db",
-    data: {}
+    kideData: {}
   },
+
+  Kult:
   {
-    name: "Kult rf",
     kideUrl: "https://api.kide.app/api/companies/d12f83ed-8efa-40d9-8288-e62f1ac8fc43",
-    data: {}
+    kideData: {}
   }
-]
+}
 
 const fetchKide = async () => {
   console.log("fetchKide()");
 
-
   try {
-    orgs.forEach(org => {
-      fetch(org.kideUrl)
+    for (const org in orgs) {
+      fetch(orgs[org].kideUrl)
         .then(res => res.json())
         .then(data => {
-          org.data = data;
+          orgs[org].kideData = data;
         })
-    });
+    }
   }
 
   catch (error) {
@@ -105,11 +108,25 @@ const fetchKide = async () => {
   }
 };
 
+//Run on startup och refresh varje timme
 fetchKide();
 setInterval(fetchKide, 1000*60*60);
 
+
+//Fetch all current kide data
 app.get('/api/getKide', async (req, res) => {
   const data = orgs;
+
+  res.send(data);
+});
+
+
+//Fetch specific kide data by name OBS case sensitive
+app.get('/api/getKide/:name', async (req, res) => {
+  const name = req.params.name;
+
+  const data = orgs[name];
+
   res.send(data);
 });
 
