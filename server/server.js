@@ -97,10 +97,7 @@ const fetchKide = async () => {
         .then(data => {
           org.data = data;
         })
-    })
-
-    const data = await res.json();
-    this.kideData = data;
+    });
   }
 
   catch (error) {
