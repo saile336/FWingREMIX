@@ -22,6 +22,7 @@ export default {
         },
     },
     created() {
+        //Fetchar med respektive organisations namn
         this.fetchApi(this.bim);
     },
 
