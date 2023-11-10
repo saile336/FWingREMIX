@@ -7,24 +7,8 @@ import DBTest from "./components/DBTest.vue";
 export default {
   data() {
     return {
-      orgs: [
-        {
-          name: "TLK",
-          kideUrl: "https://api.kide.app/api/companies/8216a1bc-760d-407b-9c77-5e26a041a25c"
-        },
-        {
-          name: "HanSe SF",
-          kideUrl: "https://api.kide.app/api/companies/90d58532-87be-4a30-b4e3-6053db20caa5"
-        },
-        {
-          name: "Commedia rf",
-          kideUrl: "https://api.kide.app/api/companies/b7b04c01-6c49-4c74-81da-9f4147aca6db"
-        },
-        {
-          name: "Kult rf",
-          kideUrl: "https://api.kide.app/api/companies/d12f83ed-8efa-40d9-8288-e62f1ac8fc43"
-        }
-      ],
+      
+      kideOrg: "",
 
       currentOrg: 0,
 
@@ -55,10 +39,17 @@ export default {
     <TheClock />
   </div>
 
-  <FetchKide :bim="orgs[currentOrg].kideUrl" :currentIndex="currentOrg" />
+  <div id="componentKide">
+  <FetchKide :bim="kideOrg" />
+</div>
 </template>
 
 <style scoped>
+#componentKide{
+  display:blocK;
+  width: 50%;
+}
+
 #logo {
   max-width: 100%;
   height: auto;
