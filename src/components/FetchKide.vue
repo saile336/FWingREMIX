@@ -30,6 +30,12 @@ export default {
             console.log(this.kideData);
         },
 
+        clickHandler(id) {
+            console.log("clickHandler()");
+            console.log(id);
+            window.open("https://kide.app/events/" + id, "_self");
+        }
+
     },
     mounted() {
         this.fetchApi(this.bim);
@@ -42,7 +48,7 @@ export default {
 <template>
     <div id="events">
         <div v-for="forening in kideData" :key="forening">
-        <div class="event" v-for="event in forening.kideData.model.events" :key="event.id">
+        <div class="event" v-for="event in forening.kideData.model.events" :key="event.id" @click="clickHandler(event.id)">
             <div class="image-container">
                 <img class="img" :src="imgUrl + event.mediaFilename" />
                 <div class="QR">
@@ -82,6 +88,17 @@ h2 {
     border-radius: 10px;
     overflow: hidden;
     box-shadow: 15px 15px 1px 1px rgba(0, 0, 0, 0.5);
+}
+
+.event:hover {
+    margin-top: 25px;
+    font-size: 25px;
+    border-radius: 10px;
+    overflow: hidden;
+    box-shadow: 15px 15px 1px 1px rgba(0, 0, 0, 0.5);
+    cursor:pointer;
+    scale: 1.1;
+    transition: .1s;
 }
 
 
