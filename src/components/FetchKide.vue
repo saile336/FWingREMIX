@@ -4,14 +4,9 @@ import VueQr from 'qrcode.vue';
 export default {
     data() {
         return {
-            backEndURL: "localhost:3000/getKide/" ,
+            backEndURL: "http://localhost:3000/api/getKide/" ,
             kideData: {
-                model: {
-                    events: [],
-                    company: {
-                        name: ""
-                    }
-                }
+                
 
             },
             imgUrl: "https://portalvhdsp62n0yt356llm.blob.core.windows.net/bailataan-mediaitems/",
@@ -29,7 +24,7 @@ export default {
     methods: {
         async fetchApi(bim) {
             console.log("fetchApi()");
-            const res = await fetch(backEndURL + bim);
+            const res = await fetch(this.backEndURL + bim);
             const data = await res.json();
             this.kideData = data;
             console.log(this.kideData);
@@ -46,7 +41,8 @@ export default {
 
 <template>
     <div id="events">
-        <div class="event" v-for="event in kideData.model.events" :key="event.id">
+        <div v-for="forening in kideData" :key="forening">
+        <div class="event" v-for="event in forening.kideData.model.events" :key="event.id">
             <div class="image-container">
                 <img class="img" :src="imgUrl + event.mediaFilename" />
                 <div class="QR">
@@ -58,6 +54,7 @@ export default {
                 </div>
             </div>
 
+        </div>
         </div>
     </div>
 </template>

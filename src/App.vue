@@ -39,10 +39,17 @@ export default {
     <TheClock />
   </div>
 
+  <div id="componentKide">
   <FetchKide :bim="kideOrg" />
+</div>
 </template>
 
 <style scoped>
+#componentKide{
+  display:blocK;
+  width: 50%;
+}
+
 #logo {
   max-width: 100%;
   height: auto;
