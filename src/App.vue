@@ -23,8 +23,14 @@ export default {
   },
 
   methods: {
-
-  }
+ isMobile() {
+   if(/Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent)) {
+     return true
+   } else {
+     return false
+   }
+ }
+}
 }
 
 </script>
@@ -35,7 +41,7 @@ export default {
     <DBTest /> <!-- hidden behind other shit but connection to server works, see console-->
   </div>
 
-  <div id="theClock">
+  <div id="theClock" v-if="!isMobile()">
     <TheClock />
   </div>
 
@@ -51,14 +57,13 @@ export default {
 }
 
 #logo {
-  max-width: 100%;
   height: auto;
   position: absolute;
   top: 50%;
   left: 50%;
-  transform: translate(-50%, -50%);
-  height: 500px;
-  width: 500px;
+  transform: translate(-15%, -50%);
+  height: 75%;
+  width: auto;
   opacity: 0.3;
   z-index: -1;
   /* kan vara full opacity as well */
