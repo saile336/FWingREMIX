@@ -54,7 +54,7 @@ export default {
                 <div class="QR">
                     <VueQr :value="qr + event.id" />
                 </div>
-                <div :style="[event.salesStarted === true ? event.salesEnded ? {'backgroundColor': 'rgba(153, 0, 0,.7)'} : {'backgroundColor': 'rgba(51, 153, 51,.7)'} : {}]" class="details" >
+                <div :style="[event.salesStarted === true ? event.availability === 0 ? {'backgroundColor': 'rgba(153, 0, 0,.7)'} : {'backgroundColor': 'rgba(51, 153, 51,.7)'} : {}]" class="details" >
                     <div class="name">{{ event.name }}</div>
                     <div class="place">{{ event.place }}</div>
                 </div>
