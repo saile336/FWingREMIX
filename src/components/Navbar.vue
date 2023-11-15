@@ -43,6 +43,7 @@ export default {
     flex-direction: row;
     position: fixed;
     bottom: 0;
+    left:0;
     width: 100%;
     height: 12%;
     background-color: #4b4ebb;

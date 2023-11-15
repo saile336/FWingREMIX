@@ -4,6 +4,7 @@ import TheClock from "./components/TheClock.vue";
 import FetchKide from "./components/FetchKide.vue";
 import DBTest from "./components/DBTest.vue";
 import Navbar from "./components/Navbar.vue";
+import FetchMenu from "./components/FetchMenu.vue";
 
 export default {
     data() {
@@ -21,6 +22,7 @@ export default {
         FetchKide,
         DBTest,
         Navbar,
+        FetchMenu,
 
     },
 
@@ -50,12 +52,17 @@ export default {
         <DBTest /> <!-- hidden behind other shit but connection to server works, see console-->
     </div>
 
-    <div id="theClock" v-if="!isMobile()">
-        <TheClock />
-    </div>
-
     <div v-show="currentPage === 'events'" id="kidePage">
         <FetchKide :bim="kideOrg" />
+    </div>
+
+    <div v-show="currentPage === 'restaurants'" id="menuPage">
+        <FetchMenu />
+    </div>
+
+
+    <div id="theClock" v-if="!isMobile()">
+        <TheClock />
     </div>
 
     <Navbar :page="currentPage" @navbarHandler="updatePage" />
