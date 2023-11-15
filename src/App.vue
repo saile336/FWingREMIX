@@ -3,77 +3,88 @@
 import TheClock from "./components/TheClock.vue";
 import FetchKide from "./components/FetchKide.vue";
 import DBTest from "./components/DBTest.vue";
+import Navbar from "./components/Navbar.vue";
 
 export default {
-  data() {
-    return {
-      
-      kideOrg: "",
+    data() {
+        return {
 
-      currentOrg: 0,
+            kideOrg: "",
+
+            currentPage: 'home',
+
+        }
+    },
+
+    components: {
+        TheClock,
+        FetchKide,
+        DBTest,
+        Navbar,
+
+    },
+
+    methods: {
+        isMobile() {
+            if (/Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent)) {
+                return true
+            } else {
+                return false
+            }
+        },
+
+        updatePage(page) {
+            console.log("updatePage");
+            this.currentPage = page;
+        },
 
     }
-  },
-
-  components: {
-    TheClock,
-    FetchKide,
-    DBTest,
-
-  },
-
-  methods: {
- isMobile() {
-   if(/Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent)) {
-     return true
-   } else {
-     return false
-   }
- }
-}
 }
 
 </script>
 
 <template>
-  <img id="logo" src="src/assets/images/tlklogo-white.png" alt="tlklogo">
-  <div id="dbTest">
-    <DBTest /> <!-- hidden behind other shit but connection to server works, see console-->
-  </div>
+    <img id="logo" src="src/assets/images/tlklogo-white.png" alt="tlklogo">
 
-  <div id="theClock" v-if="!isMobile()">
-    <TheClock />
-  </div>
+    <div id="dbTest">
+        <DBTest /> <!-- hidden behind other shit but connection to server works, see console-->
+    </div>
 
-  <div id="componentKide">
-  <FetchKide :bim="kideOrg" />
-</div>
+    <div id="theClock" v-if="!isMobile()">
+        <TheClock />
+    </div>
+
+    <div v-show="currentPage === 'events'" id="kidePage">
+        <FetchKide :bim="kideOrg" />
+    </div>
+
+    <Navbar :page="currentPage" @navbarHandler="updatePage" />
 </template>
 
 <style scoped>
-#componentKide{
-  display:blocK;
-  width: 50%;
+#theClock {
+    position: absolute;
+    top: 5vh;
+    left: 2vw;
+    height: fit-content;
+    width: fit-content;
+}
+
+#kidePage {
+    display: blocK;
+    width: 50%;
 }
 
 #logo {
-  height: auto;
-  position: absolute;
-  top: 50%;
-  left: 50%;
-  transform: translate(-15%, -50%);
-  height: 75%;
-  width: auto;
-  opacity: 0.3;
-  z-index: -1;
-  /* kan vara full opacity as well */
-}
-
-#theClock {
-  position: absolute;
-  top: 5vh;
-  left: 2vw;
-  height: fit-content;
-  width: fit-content;
+    height: auto;
+    position: fixed;
+    top: 45%;
+    left: 50%;
+    transform: translate(-20%, -50%);
+    height: 75%;
+    width: auto;
+    opacity: 0.2;
+    z-index: -1;
+    /* kan vara full opacity as well */
 }
 </style>
