@@ -7,24 +7,8 @@ import DBTest from "./components/DBTest.vue";
 export default {
   data() {
     return {
-      orgs: [
-        {
-          name: "TLK",
-          kideUrl: "https://api.kide.app/api/companies/8216a1bc-760d-407b-9c77-5e26a041a25c"
-        },
-        {
-          name: "HanSe",
-          kideUrl: "https://api.kide.app/api/companies/90d58532-87be-4a30-b4e3-6053db20caa5"
-        },
-        {
-          name: "Commedia",
-          kideUrl: "https://api.kide.app/api/companies/b7b04c01-6c49-4c74-81da-9f4147aca6db"
-        },
-        {
-          name: "Kult",
-          kideUrl: "https://api.kide.app/api/companies/d12f83ed-8efa-40d9-8288-e62f1ac8fc43"
-        }
-      ],
+      
+      kideOrg: "",
 
       currentOrg: 0,
 
@@ -39,8 +23,14 @@ export default {
   },
 
   methods: {
-
-  }
+ isMobile() {
+   if(/Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent)) {
+     return true
+   } else {
+     return false
+   }
+ }
+}
 }
 
 </script>
@@ -51,23 +41,29 @@ export default {
     <DBTest /> <!-- hidden behind other shit but connection to server works, see console-->
   </div>
 
-  <div id="theClock">
+  <div id="theClock" v-if="!isMobile()">
     <TheClock />
   </div>
 
-  <FetchKide :bim="orgs[0].name" />
+  <div id="componentKide">
+  <FetchKide :bim="kideOrg" />
+</div>
 </template>
 
 <style scoped>
+#componentKide{
+  display:blocK;
+  width: 50%;
+}
+
 #logo {
-  max-width: 100%;
   height: auto;
   position: absolute;
   top: 50%;
   left: 50%;
-  transform: translate(-50%, -50%);
-  height: 500px;
-  width: 500px;
+  transform: translate(-15%, -50%);
+  height: 75%;
+  width: auto;
   opacity: 0.3;
   z-index: -1;
   /* kan vara full opacity as well */
