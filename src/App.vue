@@ -5,6 +5,8 @@ import FetchKide from "./components/FetchKide.vue";
 import DBTest from "./components/DBTest.vue";
 import Navbar from "./components/Navbar.vue";
 import FetchMenu from "./components/FetchMenu.vue";
+import Classes from "./components/Classes.vue";
+import Settings from "./components/Settings.vue";
 
 export default {
     data() {
@@ -23,6 +25,8 @@ export default {
         DBTest,
         Navbar,
         FetchMenu,
+        Classes,
+        Settings,
 
     },
 
@@ -58,6 +62,13 @@ export default {
 
     <div v-show="currentPage === 'restaurants'" id="menuPage">
         <FetchMenu />
+    </div>
+
+    <div v-show="currentPage === 'calendar'" id="menuPage">
+        <Classes />
+    </div>
+    <div v-show="currentPage === 'settings'" id="menuPage">
+        <Settings />
     </div>
 
 
