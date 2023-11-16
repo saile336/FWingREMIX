@@ -59,6 +59,8 @@ export default {
 }
 
 #navbar img {
+    width: 10%;
+    max-width:100px;
     height: 45%;
     padding: 15px;
     border-radius: 10px;
