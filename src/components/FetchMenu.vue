@@ -6,6 +6,8 @@ export default {
             restaurantData: {
 
             },
+            isDataFetched: false,
+            desiredDate: new Date(),
         }
     },
 
@@ -15,30 +17,95 @@ export default {
             const res = await fetch(this.backEndURL);
             const data = await res.json();
             this.restaurantData = data;
+            this.isDataFetched = true;
             console.log(this.restaurantData);
+        },
+
+        cleanName(name) {
+            let trimName = String(name).trim();
+            let firstChar = trimName.charAt(0);
+
+            switch (true) {
+                case !isNaN(firstChar):
+                    trimName = "Vegetarisk";
+                    break;
+                case trimName === 'Grönsakslunch':
+                    trimName = "Vegetarisk";
+                    break;
+                case trimName === 'Vegaani':
+                    trimName = "Vegansk";
+                    break;
+                case trimName === 'Päivän lounas':
+                    trimName = "Lunch";
+                    break;
+                case trimName === 'Päivän erikoinen':
+                    trimName = "Lunch";
+                    break;
+                case trimName === "null" || trimName === 'Makeasti':
+                    trimName = "Efterrätt";
+                    break;
+                default:
+                    trimName = trimName.replace(/ [\d,/. €]+/g, "");
+                    break;
+            }
+
+            return trimName;
+        },
+
+        formatDate(date) {
+            const options = { weekday: 'short', day: 'numeric', month: 'numeric' };
+            const formattedDate = date.toLocaleDateString('sv-SE', options)
+                .replace(/(\d{2})\/(\d{2})/, '$1.$2.')
+                .replace(/^\w/, c => c.toUpperCase());
+            return formattedDate;
+        },
+
+        findUnicafeDate(list) {
+            console.log("Desired date's unicafe index: " + list.findIndex(x => x.date === this.formatDate(this.desiredDate)));
+            return list.findIndex(x => x.date === this.formatDate(this.desiredDate))
+        },
+
+        restaurantSelect(nam) {
+            console.log(nam);
+            document.querySelector('#' + nam + ' .foodContainer').classList.toggle("selected");
+            document.querySelectorAll('.menu').forEach(menu => {
+                if (menu.id !== nam) {
+                    menu.classList.toggle("nonActiveMenu");
+                }
+                else {
+                    menu.classList.toggle("activeMenu");
+                }
+            });
+            document.querySelector('#' + nam + ' img').classList.toggle("selected");
         }
+
     },
 
     mounted() {
-        this.fetchRestaurants();
+        this.fetchRestaurants({ date: this.formatDate(this.desiredDate) });
     }
 }
 </script>
 
 <template>
-    <div id="flexBox" v-if="restaurantData[0]">
-        <div class="menu" v-for="restaurant in restaurantData" :key="restaurant">
-            <div v-if="restaurant.name === 'Diak'">
-                <div class="menuItem" v-for="option in restaurant.menu.MenusForDays[0].SetMenus" :text="option.Name"
-                    :key="option"></div>
+    <div id="flexBox" v-if="isDataFetched">
+        <div class="menu" :id="restaurant.name" v-for="restaurant in restaurantData" :key="restaurant"
+            @click="restaurantSelect(restaurant.name)">
+            <img class="selected" :src="'src/assets/images/lunch/' + restaurant.name + '.png'" :alt="restaurant.name">
+            <div v-if="restaurant.name === 'Unicafe'" class="foodContainer">
+                <ul class="lunchType"
+                    v-for="lunch in restaurant.menu[18].menuData.menus[this.findUnicafeDate(restaurant.menu[18].menuData.menus)].data"
+                    :key="lunch">
+                    {{ cleanName(lunch.price.name) }}
+                    <li class="menuItem" v-text="lunch.name"></li>
+                </ul>
             </div>
 
-            <div v-else-if="restaurant.name === 'Unicafe'">
-
-            </div>
-
-            <div v-else class="menuItem" v-for="option in restaurant.menu.MenusForDays[0].SetMenus" :text="option.Name"
-                :key="option">
+            <div v-else class="foodContainer">
+                <ul class="lunchType" v-for="lunchtype in restaurant.menu.MenusForDays[0].SetMenus" :key="lunchtype">
+                    {{ cleanName(lunchtype.Name) }}
+                    <li class="menuItem" v-for="option in lunchtype.Components" :key="option" v-text="option"></li>
+                </ul>
             </div>
         </div>
     </div>
@@ -48,10 +115,69 @@ export default {
 #flexBox {
     display: flex;
     flex-direction: column;
+    justify-content: center;
+    gap: 5%;
+    align-items: center;
+    height: 100vh;
+    width: 100vw;
 }
 
 .menu {
+    position: relative;
     display: flex;
     flex-direction: column;
+    background-color: white;
+    color: #1e22aa;
+    width: 90%;
+    min-height: 20vh;
+    border-radius: 20px;
+    overflow: hidden;
+    box-sizing: border-box;
+}
+
+.menu img {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    width: 90%;
+    height: auto;
+    opacity: .1;
+    z-index: 0;
+}
+
+.menuItem {
+}
+
+.lunchType {
+    font-size: 25px;
+    list-style: none;
+    padding: 10px;
+    border-bottom: solid rgba(0, 0, 0, .3) 2px;
+    margin: 0;
+}
+
+.foodContainer{
+    display:none;
+    z-index: 1;
+    opacity: 0;
+}
+
+.selected {
+    display:block;
+    opacity: 1 !important;
+}
+
+.activeMenu {
+    height: fit-content;
+}
+
+.nonActiveMenu {
+    min-height:10vh;
+    opacity:.1;
+}
+
+.lunchType:last-child {
+    border-bottom: none;
 }
 </style>

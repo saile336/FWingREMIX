@@ -10,7 +10,8 @@ export default {
 
             },
             imgUrl: "https://portalvhdsp62n0yt356llm.blob.core.windows.net/bailataan-mediaitems/",
-            qr: "https://kide.app/events/"
+            qr: "https://kide.app/events/",
+            isDataFetched: false,
         }
     },
     components: {
@@ -27,6 +28,7 @@ export default {
             const res = await fetch(this.backEndURL + bim);
             const data = await res.json();
             this.kideData = data;
+            this.isDataFetched = true;
             console.log(this.kideData);
         },
 
@@ -46,7 +48,7 @@ export default {
 </script>
 
 <template>
-    <div id="events">
+    <div id="events" v-if="isDataFetched">
         <div v-for="forening in kideData" :key="forening">
         <div class="event" v-for="event in forening.kideData.model.events" :key="event.id" @click="clickHandler(event.id)">
             <div class="image-container">

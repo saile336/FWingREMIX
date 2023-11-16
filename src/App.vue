@@ -46,7 +46,7 @@ export default {
 </script>
 
 <template>
-    <img id="logo" src="src/assets/images/tlklogo-white.png" alt="tlklogo">
+    <img id="logo" src="src/assets/images/logos/tlklogo-white.png" alt="tlklogo">
 
     <div id="dbTest">
         <DBTest /> <!-- hidden behind other shit but connection to server works, see console-->
