@@ -41,6 +41,9 @@ export default {
                 case trimName === 'Päivän erikoinen':
                     trimName = "Lunch";
                     break;
+                case trimName === 'Lisuke':
+                    trimName = "Sidorätt";
+                    break;
                 case trimName === "null" || trimName === 'Makeasti':
                     trimName = "Efterrätt";
                     break;
@@ -146,8 +149,7 @@ export default {
     z-index: 0;
 }
 
-.menuItem {
-}
+.menuItem {}
 
 .lunchType {
     font-size: 25px;
@@ -157,14 +159,14 @@ export default {
     margin: 0;
 }
 
-.foodContainer{
-    display:none;
+.foodContainer {
+    display: none;
     z-index: 1;
     opacity: 0;
 }
 
 .selected {
-    display:block;
+    display: block;
     opacity: 1 !important;
 }
 
@@ -173,8 +175,8 @@ export default {
 }
 
 .nonActiveMenu {
-    min-height:10vh;
-    opacity:.1;
+    min-height: 10vh;
+    opacity: .1;
 }
 
 .lunchType:last-child {
