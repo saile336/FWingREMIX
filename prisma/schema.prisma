@@ -3,11 +3,16 @@ generator client {
 }
 
 datasource db {
-  provider = "postgresql"
+  provider = "mongodb"
   url      = env("DATABASE_URL")
 }
 
-model Sample {
-  id        Int      @id @default(autoincrement())
-  title     String
+// Kör 'npx prisma db push' i konsolen för att införa nya modeller eller ändringar till modeller i databasen.
+model users {
+  id       String  @id @default(auto()) @map("_id") @db.ObjectId
+  username String  @unique
+}
+
+model testModel{
+  id  String @id @default(auto()) @map("_id") @db.ObjectId
 }

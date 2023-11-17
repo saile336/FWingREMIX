@@ -6,7 +6,7 @@ const cors = require('cors');
 const app = express();
 const port = 3000;
 
-const prisma = new PrismaClient();
+const prisma = new PrismaClient()
 
 app.use(cors({
     origin: 'http://localhost:5173', // Match the Vue app's URL
@@ -17,51 +17,59 @@ app.use(bodyParser.json());
 app.get('/api/test', (req, res) => {
     res.json({ message: 'Hello from the server!' });
 });
-
 app.get('/api/testDatabase', async (req, res) => {
     try {
-        const result = await prisma.sample.findMany();
-        res.json({ result });
-    } catch (error) {
-        console.error('Database Error:', error);
+        //database query to check the connection
+        const user = await prisma.users.findFirst();
+        
+        if (user) {
+          res.json({ message: 'Database connection successful' });
+        } else {
+          res.json({ message: 'Database connection failed' });
+        }
+      } catch (error) {
+        console.error('Error testing database connection:', error);
         res.status(500).json({ error: 'Internal Server Error' });
-    }
+      }
 });
+//Fungerande sätt att lägga till user till users collection i db via Register.vue component, however onödigt
+app.post('/api/register', async (req, res) => {
+    const { username } = req.body;
 
-app.get('/api/createSample', async (req, res) => {
     try {
-        const newSample = await prisma.sample.create({
+        const newUser = await prisma.users.create({
             data: {
-                title: 'ted Doe',
+                username,
             },
         });
 
-        res.json({ message: 'New sample created!', newSample });
+        res.json({ message: 'User registered successfully', users: newUser });
     } catch (error) {
-        console.error('Error creating sample:', error);
+        console.error('Error registering user:', error);
         res.status(500).json({ error: 'Internal Server Error' });
     }
 });
-
-// byt ut your_table, column1, och column2 till faktiska tabeller och kolumner
-app.get('/api/getData', async (req, res) => {
-    const data = await prisma.your_table.findMany();
-    res.json(data);
-    console.log("GET data")
-});
-
-app.post('/api/addData', async (req, res) => {
-    const { newData } = req.body;
-    await prisma.your_table.create({
-        data: {
-            column1: newData.field1,
-            column2: newData.field2,
-        },
-    });
-    res.send('Data added successfully');
-});
-
-
+// Hitta på hur man kan få ut nödvändig info av en CGI inloggning
+async placeHolder =>{
+const authenticatedUser = {
+    username: '',
+    
+  };
+  
+  // Spara sedan den infon till DB
+  const newUser = await prisma.user.create({
+    data: {
+      username: authenticatedUser.username,
+    },
+  });
+} 
+  // Implementera jwt token?
+  /*
+  const token = jwt.sign({ userId: newUser.id, username: newUser.username }, 'your-secret-key');
+  
+  // Send the token to the client
+  res.json({ token });
+*/
 
 //Organisationer för kide fetch
 let orgs = {

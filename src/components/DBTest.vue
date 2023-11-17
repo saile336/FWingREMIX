@@ -22,14 +22,6 @@ export default {
             .catch(error => {
                 console.error('Error:', error);
             });
-        fetch('http://localhost:3000/api/createSample')
-            .then(response => response.json())
-            .then(data => {
-                console.log('Database Response:', data);
-            })
-            .catch(error => {
-                console.error('Error:', error);
-            });
         fetch('http://localhost:3000/api/testDatabase')
             .then(response => response.json())
             .then(data => {

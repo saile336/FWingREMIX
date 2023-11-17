@@ -5,6 +5,7 @@ import FetchKide from "./components/FetchKide.vue";
 import DBTest from "./components/DBTest.vue";
 import Navbar from "./components/Navbar.vue";
 import FetchMenu from "./components/FetchMenu.vue";
+//import Register from "./components/Register.vue";
 
 export default {
     data() {
@@ -23,6 +24,7 @@ export default {
         DBTest,
         Navbar,
         FetchMenu,
+        //Register,
 
     },
 
@@ -51,6 +53,9 @@ export default {
     <div id="dbTest">
         <DBTest /> <!-- hidden behind other shit but connection to server works, see console-->
     </div>
+    <!--<div id="register">
+        <Register />
+    </div>--> 
 
     <div v-show="currentPage === 'events'" id="kidePage">
         <FetchKide :bim="kideOrg" />
