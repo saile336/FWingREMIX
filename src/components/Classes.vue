@@ -66,6 +66,9 @@ export default {
 </script>
 
 <template>
+
+<h2>Calendar</h2>
+
     <div class="classes">
         <div class="classText" v-for="(course, index) in courses" :key="index">
             <h2 class="course">{{ course.course }}</h2>
