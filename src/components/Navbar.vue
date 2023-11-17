@@ -33,7 +33,7 @@ export default {
 <template>
     <div id="navbar">
         <img v-for="page in pages" :key="page" :id="page" @click="navbarHandler(page)"
-            :src="'src/assets/images/' + page + '.svg'" :style="[page == this.page ? {'background-color': '#969cff'} : {}]" :alt="page">
+            :src="'src/assets/images/navbar/' + page + '.svg'" :style="[page == this.page ? {'background-color': '#969cff'} : {}]" :alt="page">
     </div>
 </template>
 
@@ -45,13 +45,22 @@ export default {
     bottom: 0;
     left:0;
     width: 100%;
-    height: 12%;
+    height: 10%;
     background-color: #4b4ebb;
-    justify-content: center;
+    justify-content: space-evenly;
     align-items: center;
 }
 
+@media (min-width: 600px) {
+    #navbar {
+        justify-content: center;
+        gap: 1%;
+    }
+}
+
 #navbar img {
+    width: 10%;
+    max-width:100px;
     height: 45%;
     padding: 15px;
     border-radius: 10px;

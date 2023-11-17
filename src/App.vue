@@ -5,6 +5,8 @@ import FetchKide from "./components/FetchKide.vue";
 import DBTest from "./components/DBTest.vue";
 import Navbar from "./components/Navbar.vue";
 import FetchMenu from "./components/FetchMenu.vue";
+import Classes from "./components/Classes.vue";
+import Settings from "./components/Settings.vue";
 //import Register from "./components/Register.vue";
 
 export default {
@@ -24,6 +26,8 @@ export default {
         DBTest,
         Navbar,
         FetchMenu,
+        Classes,
+        Settings,
         //Register,
 
     },
@@ -48,7 +52,7 @@ export default {
 </script>
 
 <template>
-    <img id="logo" src="src/assets/images/tlklogo-white.png" alt="tlklogo">
+    <img id="logo" src="src/assets/images/logos/tlklogo-white.png" alt="tlklogo">
 
     <div id="dbTest">
         <DBTest /> <!-- hidden behind other shit but connection to server works, see console-->
@@ -63,6 +67,13 @@ export default {
 
     <div v-show="currentPage === 'restaurants'" id="menuPage">
         <FetchMenu />
+    </div>
+
+    <div v-show="currentPage === 'calendar'" id="menuPage">
+        <Classes />
+    </div>
+    <div v-show="currentPage === 'settings'" id="menuPage">
+        <Settings />
     </div>
 
 
