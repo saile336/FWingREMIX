@@ -1,4 +1,5 @@
 <template>
+    <h2>Settings</h2>
     <div class="schedule-button-container">
         <button class="action-button" @click="toggleInputField">
             Add to Schedule
