@@ -48,8 +48,6 @@ export default {
 </script>
 
 <template>
-    <h2>Events</h2>
-
     <div id="events" v-if="isDataFetched">
         <div v-for="forening in kideData" :key="forening">
         <div class="event" v-for="event in forening.kideData.model.events" :key="event.id" @click="clickHandler(event.id)">

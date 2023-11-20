@@ -67,8 +67,6 @@ export default {
 
 <template>
 
-<h2>Calendar</h2>
-
     <div class="classes">
         <div class="classText" v-for="(course, index) in courses" :key="index">
             <h2 class="course">{{ course.course }}</h2>
@@ -101,11 +99,15 @@ export default {
     box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1); 
     padding: 20px; 
     margin: 20px;
+    overflow: hidden; 
+
 }
 
 .course {
     font-size: 1.5em; 
     font-weight: bold;
+
+
 }
 
 .timeBar {

@@ -109,7 +109,7 @@ export default {
 </script>
 
 <template>
-    <h2 id="Restaurants">Restaurants</h2>
+   
     <!-- Checks if restaurant data has been fetched before looping -->
     <div id="flexBox" v-if="isDataFetched">
 

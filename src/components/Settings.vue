@@ -1,5 +1,4 @@
 <template>
-    <h2>Settings</h2>
     <div class="schedule-button-container">
         <button class="action-button" @click="toggleInputField">
             Add to Schedule
@@ -31,6 +30,16 @@
                 {{ widget }}
             </button>
         </div>
+        <button class="action-button" @click="toggleAssociationOptions">
+            Associations
+        </button>
+
+        <div v-if="showAssociationOptions" class="associationOptions">
+            <button v-for="(selected, association) in associations" :key="association" :class="{ active: selected }"
+                @click="selectAssociation(association)">
+                {{ association }}
+            </button>
+        </div>
     </div>
 </template>
   
@@ -44,7 +53,9 @@ export default {
             showDietOptions: false, // Controls visibility of diet options
             diets: { Milk: false, Laktos: false, Vege: false, Gluten: false },
             showWidgetOptions: false, // Controls visibility of widget options
-            widgets: { Schedule: false, Menu: false, Events: false, Weather: false }
+            widgets: { Schedule: false, Menu: false, Events: false, Weather: false },
+            showAssociationOptions: false,
+            associations: { TLK: false, Hanse: false, Hosk: false, Kult: false, Commedia: false },
         };
     },
     methods: {
@@ -60,6 +71,7 @@ export default {
             this.showDietOptions = !this.showDietOptions;
         },
         selectDiet(option) {
+            //choses diets
             this.diets[option] = !this.diets[option];
             localStorage.setItem('Diets', JSON.stringify(this.diets));
         },
@@ -76,6 +88,20 @@ export default {
         },
         countSelectedWidgets() {
             return Object.values(this.widgets).filter(val => val).length;
+        },
+        toggleAssociationOptions() {
+            this.showAssociationOptions = !this.showAssociationOptions;
+        },
+        selectAssociation(association) {
+            //choses associations but only one at a time
+            Object.keys(this.associations).forEach((key) => {
+                this.associations[key] = false;
+            });
+
+            this.associations[association] = true;
+
+            // Save the new state to local storage
+            localStorage.setItem('Associations', JSON.stringify(this.associations));
         },
         loadSettings() {
             // Load saved settings for diets and widgets
@@ -100,9 +126,15 @@ export default {
 .schedule-button-container {
     display: flex;
     flex-direction: column;
-    align-items: center;
-    margin: 20px;
-    gap: 10px;
+    justify-content: center; 
+    align-items: center; 
+    position: absolute; 
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%); 
+    width: 100%; 
+    max-width: 400px; 
+    gap: 40px;
 }
 
 .action-button {
@@ -110,14 +142,15 @@ export default {
     color: white;
     border: none;
     border-radius: 20px;
-    padding: 10px 20px;
-    font-size: 16px;
+    padding: 15px 30px;
+    font-size: 18px;
     font-weight: bold;
     cursor: pointer;
     display: flex;
     align-items: center;
     box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
     transition: background-color 0.3s;
+
 }
 
 .action-button:hover {
@@ -183,6 +216,30 @@ export default {
     margin-bottom: 10px;
     font-size: 0.9em;
     color: white;
+}
+
+.associationOptions button {
+    /* combine these with rest of css */
+
+    margin: 5px;
+    padding: 10px 15px;
+    border: none;
+    border-radius: 4px;
+    cursor: pointer;
+}
+
+.associationOptions button.active {
+
+    background-color: #4CAF50;
+    color: white;
+}
+
+.associationOptions {
+
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: center;
+    gap: 10px;
 }
 </style>
   
