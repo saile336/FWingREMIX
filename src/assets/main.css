@@ -19,6 +19,18 @@ body {
   -ms-user-select: none;
 }
 
+h2 {
+  color: white;
+  font-size: 35px;
+  margin: 0;
+  padding: 0;
+  position: absolute;
+  top: 5%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  font-weight: 400;
+}
+
 #app {
   margin: 0;
   padding: 0;

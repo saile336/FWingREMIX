@@ -12,6 +12,8 @@ export default {
     },
 
     methods: {
+
+        //Fetches ALL restaurant data from backend.
         async fetchRestaurants() {
             console.log("fetchRestaurants()");
             const res = await fetch(this.backEndURL);
@@ -22,6 +24,8 @@ export default {
         },
 
         cleanName(name) {
+
+            //Cleans names and trims numbers. Swedish only atm.
             let trimName = String(name).trim();
             let firstChar = trimName.charAt(0);
 
@@ -56,6 +60,8 @@ export default {
         },
 
         formatDate(date) {
+
+            //Formats raw date into 'Weekday, DD.MM.'
             const options = { weekday: 'short', day: 'numeric', month: 'numeric' };
             const formattedDate = date.toLocaleDateString('sv-SE', options)
                 .replace(/(\d{2})\/(\d{2})/, '$1.$2.')
@@ -64,13 +70,26 @@ export default {
         },
 
         findUnicafeDate(list) {
+
+            //Checks unicafe array of objects' dates for date that corresponds to desiredDate, returns index of object with that date
             console.log("Desired date's unicafe index: " + list.findIndex(x => x.date === this.formatDate(this.desiredDate)));
             return list.findIndex(x => x.date === this.formatDate(this.desiredDate))
         },
 
         restaurantSelect(nam) {
             console.log(nam);
-            document.querySelector('#' + nam + ' .foodContainer').classList.toggle("selected");
+            const thisMenu = document.querySelector('#' + nam);
+
+
+            //Makes the selected menus items visible
+            thisMenu.querySelector('.foodContainer').classList.toggle("selected");
+
+
+            //Makes background transparent
+            thisMenu.querySelector('img').classList.toggle("selected");
+
+
+            //All menus except the selected one are made non active
             document.querySelectorAll('.menu').forEach(menu => {
                 if (menu.id !== nam) {
                     menu.classList.toggle("nonActiveMenu");
@@ -79,7 +98,6 @@ export default {
                     menu.classList.toggle("activeMenu");
                 }
             });
-            document.querySelector('#' + nam + ' img').classList.toggle("selected");
         }
 
     },
@@ -91,10 +109,18 @@ export default {
 </script>
 
 <template>
+    <h2 id="Restaurants">Restaurants</h2>
+    <!-- Checks if restaurant data has been fetched before looping -->
     <div id="flexBox" v-if="isDataFetched">
+
+        <!-- Creates separate menu div for each restaurant in restaurantData -->
         <div class="menu" :id="restaurant.name" v-for="restaurant in restaurantData" :key="restaurant"
             @click="restaurantSelect(restaurant.name)">
             <img class="selected" :src="'src/assets/images/lunch/' + restaurant.name + '.png'" :alt="restaurant.name">
+
+            <!-- Creates separate lunch types, ie vege soppa lunch efterrätt, goes through cleanName function.
+            Unicafe has different rules so it has its own loop
+            -->
             <div v-if="restaurant.name === 'Unicafe'" class="foodContainer">
                 <ul class="lunchType"
                     v-for="lunch in restaurant.menu[18].menuData.menus[this.findUnicafeDate(restaurant.menu[18].menuData.menus)].data"
@@ -111,10 +137,12 @@ export default {
                 </ul>
             </div>
         </div>
+
     </div>
 </template>
 
 <style scoped>
+
 #flexBox {
     display: flex;
     flex-direction: column;
@@ -132,10 +160,11 @@ export default {
     background-color: white;
     color: #1e22aa;
     width: 90%;
-    min-height: 20vh;
+    height: 20vh;
     border-radius: 20px;
     overflow: hidden;
     box-sizing: border-box;
+    transition: .2s;
 }
 
 .menu img {
@@ -151,32 +180,34 @@ export default {
 
 .menuItem {}
 
+
+.foodContainer {
+    z-index: 1;
+    opacity: 0;
+    transition: .1s;
+}
+
+.selected {
+    opacity: 1 !important;
+}
+
+.activeMenu {
+    height: 50vh;
+    overflow-y: scroll;
+}
+
+.nonActiveMenu {
+    height: 10vh;
+    opacity: .1;
+    pointer-events: none;
+}
+
 .lunchType {
     font-size: 25px;
     list-style: none;
     padding: 10px;
     border-bottom: solid rgba(0, 0, 0, .3) 2px;
     margin: 0;
-}
-
-.foodContainer {
-    display: none;
-    z-index: 1;
-    opacity: 0;
-}
-
-.selected {
-    display: block;
-    opacity: 1 !important;
-}
-
-.activeMenu {
-    height: fit-content;
-}
-
-.nonActiveMenu {
-    min-height: 10vh;
-    opacity: .1;
 }
 
 .lunchType:last-child {

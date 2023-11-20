@@ -52,6 +52,8 @@ export default {
 </script>
 
 <template>
+    <h1 id="title" v-show="currentPage ==='home'">Arcad<span>A</span>pp</h1>
+
     <img id="logo" src="src/assets/images/logos/tlklogo-white.png" alt="tlklogo">
 
     <div id="dbTest">
@@ -59,7 +61,7 @@ export default {
     </div>
     <!--<div id="register">
         <Register />
-    </div>--> 
+    </div>-->
 
     <div v-show="currentPage === 'events'" id="kidePage">
         <FetchKide :bim="kideOrg" />
@@ -69,10 +71,10 @@ export default {
         <FetchMenu />
     </div>
 
-    <div v-show="currentPage === 'calendar'" id="menuPage">
+    <div v-show="currentPage === 'calendar'" id="calendarPage">
         <Classes />
     </div>
-    <div v-show="currentPage === 'settings'" id="menuPage">
+    <div v-show="currentPage === 'settings'" id="settingsPage">
         <Settings />
     </div>
 
@@ -85,6 +87,22 @@ export default {
 </template>
 
 <style scoped>
+#title{
+    color: white;
+    font-size: 50px;
+    margin: 0;
+    padding: 0;
+    position: absolute;
+    top: 10%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    font-weight: 400;
+}
+
+#title:first-letter, #title span {
+    font-size: 55px;
+}
+
 #theClock {
     position: absolute;
     top: 5vh;
