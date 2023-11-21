@@ -1,6 +1,6 @@
-# cornern
+# Fwing
 
-This template should help get you started developing with Vue 3 in Vite.
+How to start With the Fwing develoment or changeing
 
 ## Recommended IDE Setup
 
@@ -14,6 +14,8 @@ See [Vite Configuration Reference](https://vitejs.dev/config/).
 
 ```sh
 npm install
+```
+```sh
 npx prisma generate
 ```
 
@@ -21,6 +23,8 @@ npx prisma generate
 
 ```sh
 npm run dev
+```
+```sh
 node server.js
 ```
 
@@ -35,3 +39,5 @@ npm run build
 ```sh
 npm run lint
 ```
+
+KEK
