@@ -11,50 +11,55 @@ import Settings from "./components/Settings.vue";
 
 export default {
     data() {
-        return {
-
-            kideOrg: "",
-
-            currentPage: 'home',
-
-        }
-    },
-
-    components: {
-        TheClock,
-        FetchKide,
-        DBTest,
-        Navbar,
-        FetchMenu,
-        Classes,
-        Settings,
-        //Register,
-
-    },
-
-    methods: {
-        isMobile() {
-            if (/Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent)) {
-                return true
-            } else {
-                return false
-            }
-        },
-
-        updatePage(page) {
-            console.log("updatePage");
-            this.currentPage = page;
-        },
-
+    return {
+      kideOrg: "",
+      currentPage: 'home',
+      logoSrc: 'src/assets/images/logos/TLK.png',
     }
+  },
+  mounted() {
+    this.updateLogoSrc();
+  },
+  components: {
+    TheClock,
+    FetchKide,
+    DBTest,
+    Navbar,
+    FetchMenu,
+    Classes,
+    Settings,
+    // Register,
+  },
+  methods: {
+    isMobile() {
+      return /Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent);
+    },
+    updatePage(page) {
+      this.currentPage = page;
+    },
+    updateLogoSrc() {
+    const associations = JSON.parse(localStorage.getItem('Associations'));
+    if (associations) {
+      for (const [key, value] of Object.entries(associations)) {
+        if (value) {
+          this.logoSrc = `src/assets/images/logos/${key}.png`;
+          console.log(`Logo updated to: ${this.logoSrc}`);
+          return;
+        }
+      }
+    }
+    // If no association is true or the 'Associations' item is not found
+    console.log('No matching association found, using default logo');
+    this.logoSrc = 'src/assets/images/logos/default-logo.png'; // Your default logo path
+  },
+  }
 }
-
 </script>
 
 <template>
-    <h1 id="title" v-show="currentPage ==='home'">Arcad<span>A</span>pp</h1>
+    <h1 id="title" v-show="currentPage === 'home'">Arcad<span>A</span>pp</h1>
 
-    <img id="logo" src="src/assets/images/logos/tlklogo-white.png" alt="tlklogo">
+    <img id="logo" :src="logoSrc" alt="logo">
 
     <div id="dbTest">
         <DBTest /> <!-- hidden behind other shit but connection to server works, see console-->
@@ -87,7 +92,7 @@ export default {
 </template>
 
 <style scoped>
-#title{
+#title {
     color: white;
     font-size: 50px;
     margin: 0;
@@ -99,7 +104,8 @@ export default {
     font-weight: 400;
 }
 
-#title:first-letter, #title span {
+#title:first-letter,
+#title span {
     font-size: 55px;
 }
 

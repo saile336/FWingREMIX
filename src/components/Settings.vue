@@ -113,6 +113,10 @@ export default {
             if (savedWidgets) {
                 this.widgets = JSON.parse(savedWidgets);
             }
+            const savedAssociations = localStorage.getItem('Associations');
+            if (savedAssociations) {
+                this.associations = JSON.parse(savedAssociations);
+            }
         }
     },
     mounted() {
@@ -126,14 +130,14 @@ export default {
 .schedule-button-container {
     display: flex;
     flex-direction: column;
-    justify-content: center; 
-    align-items: center; 
-    position: absolute; 
+    justify-content: center;
+    align-items: center;
+    position: absolute;
     top: 50%;
     left: 50%;
-    transform: translate(-50%, -50%); 
-    width: 100%; 
-    max-width: 400px; 
+    transform: translate(-50%, -50%);
+    width: 100%;
+    max-width: 400px;
     gap: 40px;
 }
 
