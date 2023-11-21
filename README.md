@@ -21,6 +21,7 @@ npx prisma generate
 
 ```sh
 npm run dev
+node server.js
 ```
 
 ### Compile and Minify for Production
