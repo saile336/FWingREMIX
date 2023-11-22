@@ -4,9 +4,9 @@ import VueQr from 'qrcode.vue';
 export default {
     data() {
         return {
-            backEndURL: "http://localhost:3000/api/getKide/" ,
+            backEndURL: "http://localhost:3000/api/getKide/",
             kideData: {
-                
+
 
             },
             imgUrl: "https://portalvhdsp62n0yt356llm.blob.core.windows.net/bailataan-mediaitems/",
@@ -52,25 +52,25 @@ export default {
 
     <div id="events" v-if="isDataFetched">
         <div v-for="forening in kideData" :key="forening">
-        <div class="event" v-for="event in forening.kideData.model.events" :key="event.id" @click="clickHandler(event.id)">
-            <div class="image-container">
-                <img class="img" :src="imgUrl + event.mediaFilename" />
-                <div class="QR">
-                    <VueQr :value="qr + event.id" />
-                </div>
-                <div :style="[event.salesStarted === true ? event.availability === 0 ? {'backgroundColor': 'rgba(153, 0, 0,.7)'} : {'backgroundColor': 'rgba(51, 153, 51,.7)'} : {}]" class="details" >
-                    <div class="name">{{ event.name }}</div>
-                    <div class="place">{{ event.place }}</div>
+            <div class="event" v-for="event in forening.kideData.model.events" :key="event.id"
+                @click="clickHandler(event.id)">
+                <div class="image-container">
+                    <img class="img" :src="imgUrl + event.mediaFilename" />
+                    <div class="QR">
+                        <VueQr :value="qr + event.id" />
+                    </div>
+                    <div :style="[event.salesStarted === true ? event.availability === 0 ? { 'backgroundColor': 'rgba(153, 0, 0,.7)' } : { 'backgroundColor': 'rgba(51, 153, 51,.7)' } : {}]"
+                        class="details">
+                        <div class="name">{{ event.name }}</div>
+                        <div class="place">{{ event.place }}</div>
+                    </div>
                 </div>
             </div>
-
-        </div>
         </div>
     </div>
 </template>
 
 <style scoped>
-
 h2 {
     font-size: 40px;
     margin: 0;
@@ -100,7 +100,7 @@ h2 {
     border-radius: 10px;
     overflow: hidden;
     box-shadow: 15px 15px 1px 1px rgba(0, 0, 0, 0.5);
-    cursor:pointer;
+    cursor: pointer;
     scale: 1.1;
     transition: .1s;
 }
@@ -120,14 +120,14 @@ h2 {
 
 
 .details {
-    display:block;
+    display: block;
     background-color: rgba(0, 0, 0, .7);
     padding: 10px;
-    position:absolute;
-    bottom:0;
-    left:50%;
-    transform:translateX(-50%);
-    width:75%;
+    position: absolute;
+    bottom: 0;
+    left: 50%;
+    transform: translateX(-50%);
+    width: 75%;
     border-radius: 10px 10px 0 0;
 }
 
