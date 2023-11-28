@@ -1,58 +1,42 @@
 <template>
     <div class="schedule-button-container">
-        <button class="action-button" @click="toggleInputField">
-            Add to Schedule
-        </button>
+        <button class="action-button" @click="toggleInputField">Add to Schedule</button>
+        <input v-if="inputVisible" type="text" v-model="link" class="link-input" placeholder="Enter link here" @keyup.enter="saveLink" />
 
-
-        <input v-if="inputVisible" type="text" v-model="link" class="link-input" placeholder="Enter link here"
-            @keyup.enter="saveLink" />
-
-        <button class="action-button" @click="toggleDietOptions">
-            Diet
-        </button>
-
+        <button class="action-button" @click="toggleDietOptions">Diet</button>
         <div v-if="showDietOptions" class="dietOptions">
             <button v-for="(selected, diet) in diets" :key="diet" :class="{ active: selected }" @click="selectDiet(diet)">
                 {{ diet }}
             </button>
         </div>
 
-        <button class="action-button" @click="toggleWidgetOptions">
-            Widgets
-        </button>
-
+        <button class="action-button" @click="toggleWidgetOptions">Widgets</button>
         <p v-if="showWidgetOptions" class="disclaimer">Choose up to 2 widgets:</p>
-
         <div v-if="showWidgetOptions" class="widgetOptions">
-            <button v-for="(selected, widget) in widgets" :key="widget" :class="{ active: selected }"
-                @click="selectWidget(widget)">
+            <button v-for="(selected, widget) in widgets" :key="widget" :class="{ active: selected }" @click="selectWidget(widget)">
                 {{ widget }}
             </button>
         </div>
-        <button class="action-button" @click="toggleAssociationOptions">
-            Associations
-        </button>
 
+        <button class="action-button" @click="toggleAssociationOptions">Associations</button>
         <div v-if="showAssociationOptions" class="associationOptions">
-            <button v-for="(selected, association) in associations" :key="association" :class="{ active: selected }"
-                @click="selectAssociation(association)">
+            <button v-for="(selected, association) in associations" :key="association" :class="{ active: selected }" @click="selectAssociation(association)">
                 {{ association }}
             </button>
         </div>
     </div>
 </template>
-  
+
 <script>
 export default {
     name: 'AddScheduleButton',
     data() {
         return {
-            inputVisible: false, // Check if we should show the link input
-            link: '', // The link to be saved
-            showDietOptions: false, // Controls visibility of diet options
+            inputVisible: false,
+            link: '',
+            showDietOptions: false,
             diets: { Milk: false, Laktos: false, Vege: false, Gluten: false },
-            showWidgetOptions: false, // Controls visibility of widget options
+            showWidgetOptions: false,
             widgets: { Schedule: false, Menu: false, Events: false, Weather: false },
             showAssociationOptions: false,
             associations: { TLK: false, Hanse: false, Hosk: false, Kult: false, Commedia: false },
@@ -65,14 +49,13 @@ export default {
         saveLink() {
             localStorage.setItem('scheduleLink', this.link);
             this.inputVisible = false;
-            this.link = ''; // Clearing input after saving
+            this.link = '';
         },
         toggleDietOptions() {
             this.showDietOptions = !this.showDietOptions;
         },
-        selectDiet(option) {
-            //choses diets
-            this.diets[option] = !this.diets[option];
+        selectDiet(diet) {
+            this.diets[diet] = !this.diets[diet];
             localStorage.setItem('Diets', JSON.stringify(this.diets));
         },
         toggleWidgetOptions() {
@@ -81,7 +64,7 @@ export default {
         selectWidget(widget) {
             const selectedWidgets = this.countSelectedWidgets();
             if (!this.widgets[widget] && selectedWidgets >= 2) {
-                return; // Do nothing if 2 widgets are already selected
+                return;
             }
             this.widgets[widget] = !this.widgets[widget];
             localStorage.setItem('Widgets', JSON.stringify(this.widgets));
@@ -93,35 +76,28 @@ export default {
             this.showAssociationOptions = !this.showAssociationOptions;
         },
         selectAssociation(association) {
-            //choses associations but only one at a time
             Object.keys(this.associations).forEach((key) => {
                 this.associations[key] = false;
             });
-
             this.associations[association] = true;
-
-            // Save the new state to local storage
             localStorage.setItem('Associations', JSON.stringify(this.associations));
+            this.$emit('associationSelected', association);
         },
-        loadSettings() {
-            // Load saved settings for diets and widgets
-            const savedDiets = localStorage.getItem('Diets');
-            if (savedDiets) {
-                this.diets = JSON.parse(savedDiets);
-            }
-            const savedWidgets = localStorage.getItem('Widgets');
-            if (savedWidgets) {
-                this.widgets = JSON.parse(savedWidgets);
-            }
-            const savedAssociations = localStorage.getItem('Associations');
-            if (savedAssociations) {
-                this.associations = JSON.parse(savedAssociations);
-            }
-        }
     },
     mounted() {
-        // Load saved settings when the component mounts
-        this.loadSettings();
+        // Load saved settings
+        const savedDiets = localStorage.getItem('Diets');
+        if (savedDiets) {
+            this.diets = JSON.parse(savedDiets);
+        }
+        const savedWidgets = localStorage.getItem('Widgets');
+        if (savedWidgets) {
+            this.widgets = JSON.parse(savedWidgets);
+        }
+        const savedAssociations = localStorage.getItem('Associations');
+        if (savedAssociations) {
+            this.associations = JSON.parse(savedAssociations);
+        }
     }
 }
 </script>

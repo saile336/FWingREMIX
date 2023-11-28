@@ -36,22 +36,37 @@ export default {
     updatePage(page) {
       this.currentPage = page;
     },
-    updateLogoSrc() {
-      const associations = JSON.parse(localStorage.getItem('Associations'));
-      if (associations) {
-        for (const [key, value] of Object.entries(associations)) {
-          if (value) {
-            this.logoSrc = `src/assets/images/logos/${key}.png`;
-            console.log(`Logo updated to: ${this.logoSrc}`);
-            return;
-          }
-        }
-      }
-      // If no association is true or the 'Associations' item is not found
-      console.log('No matching association found, using default logo');
-      this.logoSrc = 'src/assets/images/logos/TLK.png'; 
+    updateAssociation(associationKey) {
+            this.updateLogoSrc(associationKey);
+            this.updateBackgroundColor(associationKey);
+        },
+        updateLogoSrc(associationKey) {
+            this.logoSrc = `src/assets/images/logos/${associationKey}.png`;
+        },
+        updateBackgroundColor(associationKey) {
+            let backgroundColor;
+            switch (associationKey) {
+                case 'TLK':
+                    backgroundColor = 'rgb(30, 34, 170)';
+                    break;
+                case 'Hanse':
+                    backgroundColor = 'rgb(255, 165, 0)';
+                    break;
+                case 'Hosk':
+                    backgroundColor = 'rgb(60, 179, 113)';
+                    break;
+                case 'Kult':
+                    backgroundColor = 'rgb(128, 128, 128)';
+                    break;
+                case 'Commedia':
+                    backgroundColor = 'rgb(255, 0, 0)';
+                    break;
+                default:
+                    backgroundColor = 'rgb(30, 34, 170)'; // Default color
+            }
+            document.body.style.backgroundColor = backgroundColor;
+        },
     },
-  },
   computed: {
   associationColor() {
     const associations = JSON.parse(localStorage.getItem('Associations'));
@@ -106,7 +121,7 @@ export default {
             <Classes />
         </div>
         <div v-show="currentPage === 'settings'" id="settingsPage">
-            <Settings />
+          <Settings @associationSelected="updateAssociation" />
         </div>
 
 
