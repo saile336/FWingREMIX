@@ -48,6 +48,7 @@ export default {
       // Save the selected logo in local storage
       localStorage.setItem("selectedLogo", this.logoSrc);
     },
+    //some1 that sees color better than me can fix this
     updateBackgroundColor(associationKey) {
       let backgroundColor;
       switch (associationKey) {
