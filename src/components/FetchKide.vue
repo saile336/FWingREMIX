@@ -54,9 +54,9 @@ export default {
                 @click="clickHandler(event.id)">
                 <div class="image-container">
                     <img class="img" :src="imgUrl + event.mediaFilename" />
-                    <div class="QR">
+                 <!--   <div class="QR">
                         <VueQr :value="qr + event.id" />
-                    </div>
+                    </div> -->
                     <div :style="[event.salesStarted === true ? event.availability === 0 ? { 'backgroundColor': 'rgba(153, 0, 0,.7)' } : { 'backgroundColor': 'rgba(51, 153, 51,.7)' } : {}]"
                         class="details">
                         <div class="name">{{ event.name }}</div>
@@ -131,12 +131,13 @@ h2 {
 
 .name {
     text-align: center;
-    font-size: 30px;
+    font-size: 20px;
     z-index: 12;
 }
 
 .place {
     text-align: center;
+    font-size: 15px;
 
 }
 

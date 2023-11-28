@@ -12,12 +12,13 @@ export default {
   data() {
     return {
       kideOrg: "",
-      currentPage: 'home',
-      logoSrc: 'src/assets/images/logos/TLK.png',
-    }
+      currentPage: "home",
+      logoSrc: "src/assets/images/logos/TLK.png",
+    };
   },
   mounted() {
-    this.updateLogoSrc();
+    // Fetch the logo source from local storage when the component mounts
+    this.loadAssociationLogoAndColor();
   },
   components: {
     TheClock,
@@ -31,149 +32,167 @@ export default {
   },
   methods: {
     isMobile() {
-      return /Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent);
+      return /Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(
+        navigator.userAgent
+      );
     },
     updatePage(page) {
       this.currentPage = page;
     },
     updateAssociation(associationKey) {
-            this.updateLogoSrc(associationKey);
-            this.updateBackgroundColor(associationKey);
-        },
-        updateLogoSrc(associationKey) {
-            this.logoSrc = `src/assets/images/logos/${associationKey}.png`;
-        },
-        updateBackgroundColor(associationKey) {
-            let backgroundColor;
-            switch (associationKey) {
-                case 'TLK':
-                    backgroundColor = 'rgb(30, 34, 170)';
-                    break;
-                case 'Hanse':
-                    backgroundColor = 'rgb(255, 165, 0)';
-                    break;
-                case 'Hosk':
-                    backgroundColor = 'rgb(60, 179, 113)';
-                    break;
-                case 'Kult':
-                    backgroundColor = 'rgb(128, 128, 128)';
-                    break;
-                case 'Commedia':
-                    backgroundColor = 'rgb(255, 0, 0)';
-                    break;
-                default:
-                    backgroundColor = 'rgb(30, 34, 170)'; // Default color
-            }
-            document.body.style.backgroundColor = backgroundColor;
-        },
+      this.updateLogoSrc(associationKey);
+      this.updateBackgroundColor(associationKey);
     },
-  computed: {
-  associationColor() {
-    const associations = JSON.parse(localStorage.getItem('Associations'));
-    let backgroundColor = 'rgb(30, 34, 170)'; // Default color
-    
-    if (associations) {
-      if (associations.TLK) backgroundColor = 'rgb(30, 34, 170)';
-      if (associations.Hanse) backgroundColor = 'rgb(255, 165, 0)';
-      if (associations.Hosk) backgroundColor = 'rgb(60, 179, 113)';
-      if (associations.Kult) backgroundColor = 'rgb(128, 128, 128)';
-      if (associations.Commedia) backgroundColor = 'rgb(255, 0, 0)';
-    }
-
-    // Update the background color here
-    document.body.style.backgroundColor = backgroundColor;
-
-    return backgroundColor;
+    updateLogoSrc(associationKey) {
+      this.logoSrc = `src/assets/images/logos/${associationKey}.png`;
+      // Save the selected logo in local storage
+      localStorage.setItem("selectedLogo", this.logoSrc);
+    },
+    updateBackgroundColor(associationKey) {
+      let backgroundColor;
+      switch (associationKey) {
+        case "TLK":
+          backgroundColor = "rgb(30, 34, 170)";
+          break;
+        case "Hanse":
+          backgroundColor = "rgb(255, 165, 0)";
+          break;
+        case "Hosk":
+          backgroundColor = "rgb(60, 179, 113)";
+          break;
+        case "Kult":
+          backgroundColor = "rgb(128, 128, 128)";
+          break;
+        case "Commedia":
+          backgroundColor = "rgb(255, 0, 0)";
+          break;
+        default:
+          backgroundColor = "rgb(30, 34, 170)"; // Default color
+      }
+      document.body.style.backgroundColor = backgroundColor;
+    },
+    loadAssociationLogoAndColor() {
+      const savedAssociations = localStorage.getItem("Associations");
+      if (savedAssociations) {
+        const associations = JSON.parse(savedAssociations);
+        const activeAssociation = Object.keys(associations).find(
+          (key) => associations[key] === true
+        );
+        if (activeAssociation) {
+          this.updateLogoSrc(activeAssociation);
+          this.updateBackgroundColor(activeAssociation);
+        }
+      }
+    },
   },
-},
+
+  computed: {
+    associationColor() {
+      const associations = JSON.parse(localStorage.getItem("Associations"));
+      let backgroundColor = "rgb(30, 34, 170)"; // Default color
+
+      if (associations) {
+        if (associations.TLK) backgroundColor = "rgb(30, 34, 170)";
+        if (associations.Hanse) backgroundColor = "rgb(255, 165, 0)";
+        if (associations.Hosk) backgroundColor = "rgb(60, 179, 113)";
+        if (associations.Kult) backgroundColor = "rgb(128, 128, 128)";
+        if (associations.Commedia) backgroundColor = "rgb(255, 0, 0)";
+      }
+
+      // Update the background color here
+      document.body.style.backgroundColor = backgroundColor;
+
+      return backgroundColor;
+    },
+  },
   watch: {
     associationColor(newValue) {
       // Update the background color when associationColor changes
       document.body.style.backgroundColor = newValue;
     },
   },
-}
+};
 </script>
 
 <template>
-    <div>
-        <div :style="{ backgroundColor: associationColor }"></div>
-        <h1 id="title" v-show="currentPage === 'home'">Arcad<span>A</span>pp</h1>
+  <div>
+    <div :style="{ backgroundColor: associationColor }"></div>
+    <h1 id="title" v-show="currentPage === 'home'">Arcad<span>A</span>pp</h1>
 
-        <img id="logo" :src="logoSrc" alt="logo">
+    <img id="logo" :src="logoSrc" alt="logo" />
 
-        <div id="dbTest">
-            <DBTest /> <!-- hidden behind other shit but connection to server works, see console-->
-        </div>
-        <!--<div id="register">
+    <div id="dbTest">
+      <DBTest />
+      <!-- hidden behind other shit but connection to server works, see console-->
+    </div>
+    <!--<div id="register">
             <Register />
         </div>-->
 
-        <div v-show="currentPage === 'events'" id="kidePage">
-            <FetchKide :bim="kideOrg" />
-        </div>
-
-        <div v-show="currentPage === 'restaurants'" id="menuPage">
-            <FetchMenu />
-        </div>
-
-        <div v-show="currentPage === 'calendar'" id="calendarPage">
-            <Classes />
-        </div>
-        <div v-show="currentPage === 'settings'" id="settingsPage">
-          <Settings @associationSelected="updateAssociation" />
-        </div>
-
-
-        <div id="theClock" v-if="!isMobile()">
-            <TheClock />
-        </div>
-
-        <Navbar :page="currentPage" @navbarHandler="updatePage" />
+    <div v-show="currentPage === 'events'" id="kidePage">
+      <FetchKide :bim="kideOrg" />
     </div>
+
+    <div v-show="currentPage === 'restaurants'" id="menuPage">
+      <FetchMenu />
+    </div>
+
+    <div v-show="currentPage === 'calendar'" id="calendarPage">
+      <Classes />
+    </div>
+    <div v-show="currentPage === 'settings'" id="settingsPage">
+      <Settings @associationSelected="updateAssociation" />
+    </div>
+
+    <div id="theClock" v-if="!isMobile()">
+      <TheClock />
+    </div>
+
+    <Navbar :page="currentPage" @navbarHandler="updatePage" />
+  </div>
 </template>
 
 <style scoped>
 #title {
-    color: white;
-    font-size: 50px;
-    margin: 0;
-    padding: 0;
-    position: absolute;
-    top: 10%;
-    left: 50%;
-    transform: translate(-50%, -50%);
-    font-weight: 400;
+  color: white;
+  font-size: 50px;
+  margin: 0;
+  padding: 0;
+  position: absolute;
+  top: 10%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  font-weight: 400;
 }
 
 #title:first-letter,
 #title span {
-    font-size: 55px;
+  font-size: 55px;
 }
 
 #theClock {
-    position: absolute;
-    top: 5vh;
-    left: 2vw;
-    height: fit-content;
-    width: fit-content;
+  position: absolute;
+  top: 5vh;
+  left: 2vw;
+  height: fit-content;
+  width: fit-content;
 }
 
 #kidePage {
-    display: blocK;
-    width: 50%;
+  display: blocK;
+  width: 50%;
 }
 
 #logo {
-    height: auto;
-    position: fixed;
-    top: 45%;
-    left: 50%;
-    transform: translate(-20%, -50%);
-    height: 75%;
-    width: auto;
-    opacity: 0.2;
-    z-index: -1;
-    /* kan vara full opacity as well */
+  height: auto;
+  position: fixed;
+  top: 45%;
+  left: 50%;
+  transform: translate(-20%, -50%);
+  height: 75%;
+  width: auto;
+  opacity: 0.2;
+  z-index: -1;
+  /* kan vara full opacity as well */
 }
 </style>
