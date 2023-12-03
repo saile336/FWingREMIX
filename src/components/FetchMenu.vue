@@ -24,42 +24,6 @@ export default {
             console.log(this.restaurantData);
         },
 
-        cleanName(name) {
-
-            //Cleans names and trims numbers. Swedish only atm.
-            let trimName = String(name).trim();
-            let firstChar = trimName.charAt(0);
-
-            switch (true) {
-                case !isNaN(firstChar):
-                    trimName = "Vegetarisk";
-                    break;
-                case trimName === 'Grönsakslunch':
-                    trimName = "Vegetarisk";
-                    break;
-                case trimName === 'Vegaani':
-                    trimName = "Vegansk";
-                    break;
-                case trimName === 'Päivän lounas':
-                    trimName = "Lunch";
-                    break;
-                case trimName === 'Päivän erikoinen':
-                    trimName = "Lunch";
-                    break;
-                case trimName === 'Lisuke':
-                    trimName = "Sidorätt";
-                    break;
-                case trimName === "null" || trimName === 'Makeasti':
-                    trimName = "Efterrätt";
-                    break;
-                default:
-                    trimName = trimName.replace(/ [\d,/. €]+/g, "");
-                    break;
-            }
-
-            return trimName;
-        },
-
         formatDate(date) {
 
             //Formats raw date into 'Weekday, DD.MM.'
@@ -115,7 +79,7 @@ export default {
 </script>
 
 <template>
-    
+
     <!-- QUICKFIX FÖR WEEKEND PLEASE FIX -->
     <div v-if="todayIsWeekend">
         <h2 style="margin-top: 200px;">AAAAA IT IS THE WEEKEND NO FOOD ://// WAIT FOR MONDAY!!! LASAGNA MMMMMMMM</h2>
@@ -130,21 +94,21 @@ export default {
             @click="restaurantSelect(restaurant.name)">
             <img class="selected" :src="'src/assets/images/lunch/' + restaurant.name + '.png'" :alt="restaurant.name">
 
-            <!-- Creates separate lunch types, ie vege soppa lunch efterrätt, goes through cleanName function.
+            <!-- Creates separate lunch types, ie vege soppa lunch efterrätt
             Unicafe has different rules so it has its own loop
             -->
             <div v-if="restaurant.name === 'Unicafe'" class="foodContainer">
                 <ul class="lunchType"
                     v-for="lunch in restaurant.menu[18].menuData.menus[this.findUnicafeDate(restaurant.menu[18].menuData.menus)].data"
                     :key="lunch">
-                    {{ cleanName(lunch.price.name) }}
+                    {{ lunch.price.name }}
                     <li class="menuItem" v-text="lunch.name"></li>
                 </ul>
             </div>
 
             <div v-else class="foodContainer">
                 <ul class="lunchType" v-for="lunchtype in restaurant.menu.MenusForDays[0].SetMenus" :key="lunchtype">
-                    {{ cleanName(lunchtype.Name) }}
+                    {{ lunchtype.Name }}
                     <li class="menuItem" v-for="option in lunchtype.Components" :key="option" v-text="option"></li>
                 </ul>
             </div>
