@@ -8,6 +8,7 @@ export default {
             },
             isDataFetched: false,
             desiredDate: new Date(),
+            todayIsWeekend: false,
         }
     },
 
@@ -104,14 +105,25 @@ export default {
 
     mounted() {
         this.fetchRestaurants({ date: this.formatDate(this.desiredDate) });
+
+        //Checks if today is weekend, if so, displays message
+        if (this.desiredDate.getDay() === 6 || this.desiredDate.getDay() === 0) {
+            this.todayIsWeekend = true;
+        }
     }
 }
 </script>
 
 <template>
-   
+    
+    <!-- QUICKFIX FÖR WEEKEND PLEASE FIX -->
+    <div v-if="todayIsWeekend">
+        <h2 style="margin-top: 200px;">AAAAA IT IS THE WEEKEND NO FOOD ://// WAIT FOR MONDAY!!! LASAGNA MMMMMMMM</h2>
+    </div>
+    <!-- QUICKFIX FÖR WEEKEND PLEASE FIX -->
+
     <!-- Checks if restaurant data has been fetched before looping -->
-    <div id="flexBox" v-if="isDataFetched">
+    <div id="flexBox" v-else-if="isDataFetched">
 
         <!-- Creates separate menu div for each restaurant in restaurantData -->
         <div class="menu" :id="restaurant.name" v-for="restaurant in restaurantData" :key="restaurant"
@@ -142,7 +154,6 @@ export default {
 </template>
 
 <style scoped>
-
 #flexBox {
     display: flex;
     flex-direction: column;
