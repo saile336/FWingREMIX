@@ -51,26 +51,34 @@ export default {
     //some1 that sees color better than me can fix this
     updateBackgroundColor(associationKey) {
       let backgroundColor;
+      let navColor;
       switch (associationKey) {
         case "TLK":
           backgroundColor = "rgb(30, 34, 170)";
+          navColor = "#4b4ebb";
           break;
         case "Hanse":
-          backgroundColor = "rgb(255, 165, 0)";
+          backgroundColor = "rgb(250,225,22)";
+          navColor = "#ceba17";
           break;
         case "Hosk":
-          backgroundColor = "rgb(60, 179, 113)";
+          backgroundColor = "rgb(41,105,55)";
+          navColor = "#54875f";
           break;
         case "Kult":
-          backgroundColor = "rgb(128, 128, 128)";
+          backgroundColor = "rgb(94, 189, 179)";
+          navColor = "#4b9890";
           break;
         case "Commedia":
-          backgroundColor = "rgb(255, 0, 0)";
+          backgroundColor = "rgb(214, 28, 14)";
+          navColor = "#b11c11";
           break;
         default:
           backgroundColor = "rgb(30, 34, 170)"; // Default color
+          navColor = "#4b4ebb";
       }
       document.body.style.backgroundColor = backgroundColor;
+      document.body.style.navColor = navColor;
     },
     loadAssociationLogoAndColor() {
       const savedAssociations = localStorage.getItem("Associations");
@@ -96,7 +104,7 @@ export default {
         if (associations.TLK) backgroundColor = "rgb(30, 34, 170)";
         if (associations.Hanse) backgroundColor = "rgb(255, 165, 0)";
         if (associations.Hosk) backgroundColor = "rgb(60, 179, 113)";
-        if (associations.Kult) backgroundColor = "rgb(128, 128, 128)";
+        if (associations.Kult) backgroundColor = "rgb(94,189,179,255)";
         if (associations.Commedia) backgroundColor = "rgb(255, 0, 0)";
       }
 
@@ -110,6 +118,9 @@ export default {
     associationColor(newValue) {
       // Update the background color when associationColor changes
       document.body.style.backgroundColor = newValue;
+    },
+    secondColor(newValue) {
+      document.body.style.navColor = newValue;
     },
   },
 };
