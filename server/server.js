@@ -143,17 +143,17 @@ app.get('/api/getKide/:name', async (req, res) => {
 let restaurants = {
     arcada: {
         name: "Arcada",
-        link: "https://www.compass-group.fi/menuapi/feed/json?costNumber=3003&language=sv-FI",
+        link: "https://www.compass-group.fi/menuapi/feed/json?costNumber=3003&language=en",
         menu: {},
     },
     diak: {
         name: "Diak",
-        link: "https://www.compass-group.fi/menuapi/feed/json?costNumber=3104&language=sv-FI",
+        link: "https://www.compass-group.fi/menuapi/feed/json?costNumber=3104&language=en",
         menu: {},
     },
     unicafe: {
         name: "Unicafe",
-        link: "https://unicafe.fi/wp-json/swiss/v1/restaurants?lang=sv",
+        link: "https://unicafe.fi/wp-json/swiss/v1/restaurants?lang=en",
         menu: {},
     },
 }

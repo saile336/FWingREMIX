@@ -49,11 +49,12 @@ export default {
 
 <template>
     <div id="events" v-if="isDataFetched">
-        <div v-for="forening in kideData" :key="forening">
+        <div class='föreningar' v-for="forening in kideData" :key="forening">
             <div class="event" v-for="event in forening.kideData.model.events" :key="event.id"
                 @click="clickHandler(event.id)">
                 <div class="image-container">
                     <img class="img" :src="imgUrl + event.mediaFilename" />
+<<<<<<< HEAD
                  <!--   <div class="QR">
                         <VueQr :value="qr + event.id" />
                     </div> -->
@@ -63,6 +64,13 @@ export default {
                         <div class="place">{{ event.place }}</div>
                         
                     </div>-->
+=======
+                    <div :style="[event.salesStarted === true ? event.availability === 0 ? { 'color': '#800000' } : { 'color': '#006600' } : {}]"
+                        class="details">
+                        <div class="name">{{ event.name }}</div>
+                        <div class="date">{{ new Date(event.dateActualFrom).toLocaleDateString('fi-FI') }}</div>
+                    </div>
+>>>>>>> 09736090551e6e9e52a708f587328b423f6d45a5
                 </div>
             </div>
         </div>
@@ -70,36 +78,48 @@ export default {
 </template>
 
 <style scoped>
+*{
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
 h2 {
     font-size: 40px;
     margin: 0;
     text-align: center;
 }
 
-
 #events {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -55%);
     display: flex;
     flex-direction: column;
+<<<<<<< HEAD
     width: 100%;
     height: 75vh;
     margin-left: 50%;
     margin-right: 50%;
+=======
+    border-radius: 15px;
+    overflow-y: scroll;
+    overflow-x: hidden;
+    height: 80vh;
+    width: 85vw;
+    background-color: white;
+>>>>>>> 09736090551e6e9e52a708f587328b423f6d45a5
 }
 
 .event {
-    margin-top: 25px;
-    font-size: 25px;
     border-radius: 10px;
     overflow: hidden;
-    box-shadow: 15px 15px 1px 1px rgba(0, 0, 0, 0.5);
+    height: 150px;
+    margin: 30px 25px 0 25px;
 }
 
 .event:hover {
-    margin-top: 25px;
-    font-size: 25px;
-    border-radius: 10px;
-    overflow: hidden;
-    box-shadow: 15px 15px 1px 1px rgba(0, 0, 0, 0.5);
     cursor: pointer;
     scale: 1.1;
     transition: .1s;
@@ -120,26 +140,30 @@ h2 {
 
 
 .details {
-    display: block;
-    background-color: rgba(0, 0, 0, .7);
-    padding: 10px;
+    font-weight: 500;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    gap:0;
+    line-height: 1;
+    background-color: rgba(255, 255, 255, 0.5);
     position: absolute;
     bottom: 0;
-    left: 50%;
-    transform: translateX(-50%);
-    width: 75%;
+    width: 100%;
+    height: 100%;
     border-radius: 10px 10px 0 0;
 }
 
 .name {
     text-align: center;
-    font-size: 20px;
+    font-size: 40px;
     z-index: 12;
 }
 
-.place {
+.date {
     text-align: center;
-    font-size: 15px;
+    font-size: 30px;
 
 }
 
