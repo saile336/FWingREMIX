@@ -15,7 +15,7 @@ export default {
         }
     },
     components: {
-        VueQr,
+      //  VueQr,
     },
 
     props: {
@@ -57,11 +57,12 @@ export default {
                  <!--   <div class="QR">
                         <VueQr :value="qr + event.id" />
                     </div> -->
-                    <div :style="[event.salesStarted === true ? event.availability === 0 ? { 'backgroundColor': 'rgba(153, 0, 0,.7)' } : { 'backgroundColor': 'rgba(51, 153, 51,.7)' } : {}]"
+                  <!--  <div :style="[event.salesStarted === true ? event.availability === 0 ? { 'backgroundColor': 'rgba(153, 0, 0,.7)' } : { 'backgroundColor': 'rgba(51, 153, 51,.7)' } : {}]"
                         class="details">
                         <div class="name">{{ event.name }}</div>
                         <div class="place">{{ event.place }}</div>
-                    </div>
+                        
+                    </div>-->
                 </div>
             </div>
         </div>
@@ -79,9 +80,10 @@ h2 {
 #events {
     display: flex;
     flex-direction: column;
-    justify-content: center;
     width: 100%;
     height: 75vh;
+    margin-left: 50%;
+    margin-right: 50%;
 }
 
 .event {
