@@ -25,12 +25,13 @@ export default {
         },
 
         formatDate(date) {
-
-            //Formats raw date into 'Weekday, DD.MM.'
-            const options = { weekday: 'short', day: 'numeric', month: 'numeric' };
-            const formattedDate = date.toLocaleDateString('sv-SE', options)
-                .replace(/(\d{2})\/(\d{2})/, '$1.$2.')
-                .replace(/^\w/, c => c.toUpperCase());
+            // Formats raw date into 'Weekday DD.MM.'
+            const options = { weekday: 'short', day: '2-digit', month: 'numeric' };
+            const formattedDate = date.toLocaleDateString('en-US', options)
+                .replace(/(\d{1,2})\/(\d{1,2})/, '$2.$1.') // Swap the positions of day and month
+                .replace(/^\w/, c => c.toUpperCase())
+                .replace(',', ''); // Remove the comma after the weekday
+            console.log(formattedDate);
             return formattedDate;
         },
 
@@ -79,7 +80,6 @@ export default {
 </script>
 
 <template>
-
     <!-- QUICKFIX FÖR WEEKEND PLEASE FIX -->
     <div v-if="todayIsWeekend">
         <h2 style="margin-top: 200px;">AAAAA IT IS THE WEEKEND NO FOOD ://// WAIT FOR MONDAY!!! LASAGNA MMMMMMMM</h2>
@@ -101,17 +101,17 @@ export default {
                 <ul class="lunchType"
                     v-for="lunch in restaurant.menu[18].menuData.menus[this.findUnicafeDate(restaurant.menu[18].menuData.menus)].data"
                     :key="lunch">
-                    {{ lunch.price.name }}
+                    <!-- {{ lunch.price.name }} -->
                     <li class="menuItem" v-text="lunch.name"></li>
                 </ul>
             </div>
 
             <div v-else class="foodContainer">
                 <ul class="lunchType" v-for="lunchtype in restaurant.menu.MenusForDays[0].SetMenus" :key="lunchtype">
-                    {{ lunchtype.Name }}
+                    <!-- {{ lunchtype.Name }} -->
                     <li class="menuItem" v-for="option in lunchtype.Components" :key="option" v-text="option"></li>
                 </ul>
-            </div>
+            </div> 
         </div>
 
     </div>

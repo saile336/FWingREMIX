@@ -133,10 +133,6 @@ export default {
 
     <img id="logo" :src="logoSrc" alt="logo" />
 
-    <div id="dbTest">
-      <DBTest />
-      <!-- hidden behind other shit but connection to server works, see console-->
-    </div>
     <!--<div id="register">
             <Register />
         </div>-->

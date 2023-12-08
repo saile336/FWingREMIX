@@ -15,7 +15,7 @@ export default {
         }
     },
     components: {
-      //  VueQr,
+        VueQr,
     },
 
     props: {
@@ -54,23 +54,11 @@ export default {
                 @click="clickHandler(event.id)">
                 <div class="image-container">
                     <img class="img" :src="imgUrl + event.mediaFilename" />
-<<<<<<< HEAD
-                 <!--   <div class="QR">
-                        <VueQr :value="qr + event.id" />
-                    </div> -->
-                  <!--  <div :style="[event.salesStarted === true ? event.availability === 0 ? { 'backgroundColor': 'rgba(153, 0, 0,.7)' } : { 'backgroundColor': 'rgba(51, 153, 51,.7)' } : {}]"
-                        class="details">
-                        <div class="name">{{ event.name }}</div>
-                        <div class="place">{{ event.place }}</div>
-                        
-                    </div>-->
-=======
                     <div :style="[event.salesStarted === true ? event.availability === 0 ? { 'color': '#800000' } : { 'color': '#006600' } : {}]"
                         class="details">
                         <div class="name">{{ event.name }}</div>
                         <div class="date">{{ new Date(event.dateActualFrom).toLocaleDateString('fi-FI') }}</div>
                     </div>
->>>>>>> 09736090551e6e9e52a708f587328b423f6d45a5
                 </div>
             </div>
         </div>
@@ -97,19 +85,12 @@ h2 {
     transform: translate(-50%, -55%);
     display: flex;
     flex-direction: column;
-<<<<<<< HEAD
-    width: 100%;
-    height: 75vh;
-    margin-left: 50%;
-    margin-right: 50%;
-=======
     border-radius: 15px;
     overflow-y: scroll;
     overflow-x: hidden;
     height: 80vh;
     width: 85vw;
     background-color: white;
->>>>>>> 09736090551e6e9e52a708f587328b423f6d45a5
 }
 
 .event {

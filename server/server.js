@@ -1,75 +1,46 @@
 const express = require('express');
 const bodyParser = require('body-parser');
-const { PrismaClient } = require('@prisma/client');
 const cors = require('cors');
 
 const app = express();
 const port = 3000;
 
-const prisma = new PrismaClient()
-
 app.use(cors({
     origin: 'http://localhost:5173', // Match the Vue app's URL
     credentials: true,
 }));
+
 app.use(bodyParser.json());
+
 //communication test
 app.get('/api/test', (req, res) => {
     res.json({ message: 'Hello from the server!' });
 });
-app.get('/api/testDatabase', async (req, res) => {
-    try {
-        //database query to check the connection
-        const user = await prisma.users.findFirst();
-        
-        if (user) {
-          res.json({ message: 'Database connection successful' });
-        } else {
-          res.json({ message: 'Database connection failed' });
-        }
-      } catch (error) {
-        console.error('Error testing database connection:', error);
-        res.status(500).json({ error: 'Internal Server Error' });
-      }
+
+//Database connection
+const { Pool } = require('pg');
+const pool = new Pool({
+    user: 'dbuser',
+    host: 'database.server.com',
+    database: 'mydb',
+    password: 'secretpassword',
+    port: 5432,
 });
-//Fungerande sätt att lägga till user till users collection i db via Register.vue component, however onödigt
-app.post('/api/register', async (req, res) => {
-    const { username } = req.body;
+
+//Template som kan modifieras
+app.put('/api/update', async (req, res) => {
+    const { id, newField } = req.body;
 
     try {
-        const newUser = await prisma.users.create({
-            data: {
-                username,
-            },
-        });
+        const result = await pool.query('UPDATE myTable SET field = $1 WHERE id = $2', [newField, id]);
 
-        res.json({ message: 'User registered successfully', users: newUser });
-    } catch (error) {
-        console.error('Error registering user:', error);
-        res.status(500).json({ error: 'Internal Server Error' });
+        res.json({ message: 'Update successful', rowsAffected: result.rowCount });
+    } catch (err) {
+        console.error('Error executing query', err.stack);
+        res.status(500).json({ message: 'Internal server error' });
     }
 });
-// Hitta på hur man kan få ut nödvändig info av en CGI inloggning
-async placeHolder =>{
-const authenticatedUser = {
-    username: '',
-    
-  };
-  
-  // Spara sedan den infon till DB
-  const newUser = await prisma.user.create({
-    data: {
-      username: authenticatedUser.username,
-    },
-  });
-} 
-  // Implementera jwt token?
-  /*
-  const token = jwt.sign({ userId: newUser.id, username: newUser.username }, 'your-secret-key');
-  
-  // Send the token to the client
-  res.json({ token });
-*/
+
 
 //Organisationer för kide fetch
 let orgs = {
