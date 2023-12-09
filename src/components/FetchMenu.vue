@@ -69,25 +69,17 @@ export default {
     },
 
     mounted() {
-        this.fetchRestaurants({ date: this.formatDate(this.desiredDate) });
 
-        //Checks if today is weekend, if so, displays message
-        if (this.desiredDate.getDay() === 6 || this.desiredDate.getDay() === 0) {
-            this.todayIsWeekend = true;
-        }
     }
 }
 </script>
 
 <template>
-    <!-- QUICKFIX FÖR WEEKEND PLEASE FIX -->
-    <div v-if="todayIsWeekend">
-        <h2 style="margin-top: 200px;">AAAAA IT IS THE WEEKEND NO FOOD ://// WAIT FOR MONDAY!!! LASAGNA MMMMMMMM</h2>
-    </div>
-    <!-- QUICKFIX FÖR WEEKEND PLEASE FIX -->
+    
+    <div id="dateSelector"></div>
 
     <!-- Checks if restaurant data has been fetched before looping -->
-    <div id="flexBox" v-else-if="isDataFetched">
+    <div id="flexBox" v-if="isDataFetched">
 
         <!-- Creates separate menu div for each restaurant in restaurantData -->
         <div class="menu" :id="restaurant.name" v-for="restaurant in restaurantData" :key="restaurant"
@@ -102,14 +94,14 @@ export default {
                     v-for="lunch in restaurant.menu[18].menuData.menus[this.findUnicafeDate(restaurant.menu[18].menuData.menus)].data"
                     :key="lunch">
                     <!-- {{ lunch.price.name }} -->
-                    <li class="menuItem" v-text="lunch.name"></li>
+                    <li v-if="lunch" class="menuItem" v-text="lunch.name"></li>
                 </ul>
             </div>
 
             <div v-else class="foodContainer">
                 <ul class="lunchType" v-for="lunchtype in restaurant.menu.MenusForDays[0].SetMenus" :key="lunchtype">
                     <!-- {{ lunchtype.Name }} -->
-                    <li class="menuItem" v-for="option in lunchtype.Components" :key="option" v-text="option"></li>
+                    <li v-if="lunchtype" class="menuItem" v-for="option in lunchtype.Components" :key="option" v-text="option"></li>
                 </ul>
             </div> 
         </div>

@@ -109,7 +109,7 @@ app.get('/api/getKide', async (req, res) => {
 app.get('/api/getKide/:name', async (req, res) => {
     const name = req.params.name;
 
-    const data = orgs[name];
+    const data = {name: orgs[name]} ;
 
     res.send(data);
 });
