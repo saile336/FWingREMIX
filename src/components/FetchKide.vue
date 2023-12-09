@@ -1,5 +1,4 @@
 <script>
-import VueQr from 'qrcode.vue';
 
 export default {
     data() {
@@ -14,9 +13,7 @@ export default {
             isDataFetched: false,
         }
     },
-    components: {
-        VueQr,
-    },
+
 
     props: {
         bim: String
@@ -66,6 +63,92 @@ export default {
 </template>
 
 <style scoped>
+
+/* css for desktop */
+*{
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+h2 {
+    font-size: 40px;
+    margin: 0;
+    text-align: center;
+}
+
+#events {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -55%);
+    display: flex;
+    flex-direction: row;
+    border-radius: 15px;
+    overflow-y: scroll;
+    overflow-x: hidden;
+    
+
+}
+
+.event {
+    border-radius: 10px;
+    overflow: hidden;
+    height: 200px;
+    margin: 30px 25px 0 25px;
+    width: 350px;
+}
+
+.event:hover {
+    cursor: pointer;
+    scale: 1.1;
+    transition: .1s;
+}
+
+
+.image-container {
+    position: relative;
+    width: 100%;
+    height: 100%;
+}
+
+.img {
+    display: block;
+    width: 100%;
+    height: auto;
+}
+
+
+.details {
+    font-weight: 500;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    gap:0;
+    line-height: 1;
+    background-color: rgba(255, 255, 255, 0.5);
+    position: absolute;
+    bottom: 0;
+    width: 100%;
+    height: 100%;
+    border-radius: 10px 10px 0 0;
+}
+
+.name {
+    text-align: center;
+    font-size: 40px;
+    z-index: 12;
+}
+
+.date {
+    text-align: center;
+    font-size: 30px;
+
+}
+
+/* css for mobile */
+@media screen and (max-width: 768px){
 *{
     margin: 0;
     padding: 0;
@@ -147,12 +230,5 @@ h2 {
     font-size: 30px;
 
 }
-
-.QR {
-    position: absolute;
-    top: 10px;
-    right: 10px;
-    width: 100px;
-    height: 100px;
 }
 </style>

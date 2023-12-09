@@ -53,7 +53,7 @@ export default {
             showWidgetOptions: false,  // Controls visibility of widget options menu
             widgets: { Schedule: false, Menu: false, Events: false, Weather: false },  // Widget options state
             showAssociationOptions: false,  // Controls visibility of association options menu
-            associations: { TLK: false, Hanse: false, Hosk: false, Kult: false, Commedia: false },  // Association options state
+            associations: { TLK: false, HanSe: false, Hosk: false, Kult: false, Commedia: false },  // Association options state
         };
     },
     methods: {
