@@ -56,6 +56,11 @@ let orgs = {
         kideData: {}
     },
 
+    Hosk:{
+        kideUrl: "https://api.kide.app/api/companies/45719a1d-a1ef-44a5-ab61-3d81f23614b5",
+        kideData: {}
+    },
+
     Commedia:
     {
         kideUrl: "https://api.kide.app/api/companies/b7b04c01-6c49-4c74-81da-9f4147aca6db",
