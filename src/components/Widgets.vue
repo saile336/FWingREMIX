@@ -1,10 +1,11 @@
 <template>
-  <div>
-    <FetchKide v-if="widgets.events" :bim="kideOrg" />
+  <div class="Widgets">
+   
     <Weather v-if="widgets.weather"/>
     <div v-if="widgets.schedule"><p>schema</p></div>
     <div v-if="widgets.menu"><p>menu</p></div>
-    <!-- ... more widgets as needed -->
+    <FetchKide v-if="widgets.events" :bim="kideOrg" />
+   
   </div>
 </template>
 
@@ -20,15 +21,15 @@ export default {
         weather: false,
         schedule: false,
         menu: false,
-        // Initialize other widgets as needed
+        
       },
-      kideOrg: "", // You should define where this value comes from
+      kideOrg: "", 
     };
   },
   components: {
     FetchKide,
     Weather,
-    // ... other components
+    
   },
   methods: {
     switchWidget(widgetName, isActive) {
@@ -56,3 +57,12 @@ export default {
   },
 };
 </script>
+<style scoped>
+.Widgets {
+  display: flex;
+  flex-direction: row;
+  width: 100%;
+}
+
+
+</style>
