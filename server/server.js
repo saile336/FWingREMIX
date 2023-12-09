@@ -20,11 +20,21 @@ app.get('/api/test', (req, res) => {
 //Database connection
 const { Pool } = require('pg');
 const pool = new Pool({
-    user: 'dbuser',
-    host: 'database.server.com',
-    database: 'mydb',
-    password: 'secretpassword',
+    user: 'wpheylxg',
+    host: 'cornelius.db.elephantsql.com',
+    database: 'wpheylxg',
+    password: 'kolla elephantsql',
     port: 5432,
+});
+
+//Test db connection in console
+pool.query('SELECT NOW()', (err, res) => {
+    if (err) {
+        console.error('Error executing query', err.stack);
+    } else {
+        console.log('Connected to database');
+        console.log('Current timestamp:', res.rows[0].now);
+    }
 });
 
 //Template som kan modifieras
@@ -35,6 +45,18 @@ app.put('/api/update', async (req, res) => {
         const result = await pool.query('UPDATE myTable SET field = $1 WHERE id = $2', [newField, id]);
 
         res.json({ message: 'Update successful', rowsAffected: result.rowCount });
+    } catch (err) {
+        console.error('Error executing query', err.stack);
+        res.status(500).json({ message: 'Internal server error' });
+    }
+});
+
+//Template som kan modifieras för get
+app.get('/api/get', async (req, res) => {
+    try {
+        const result = await pool.query('SELECT * FROM myTable');
+
+        res.json(result.rows);
     } catch (err) {
         console.error('Error executing query', err.stack);
         res.status(500).json({ message: 'Internal server error' });
