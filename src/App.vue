@@ -59,7 +59,7 @@ export default {
           backgroundColor = "rgb(30, 34, 170)";
           navColor = "#4b4ebb";
           break;
-        case "Hanse":
+        case "HanSe":
           backgroundColor = "rgb(250,225,22)";
           navColor = "#ceba17";
           break;
