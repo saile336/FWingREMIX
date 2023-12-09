@@ -8,7 +8,7 @@ export default {
             },
             isDataFetched: false,
             desiredDate: new Date(),
-            todayIsWeekend: false,
+            dateOffset: 0,
         }
     },
 
@@ -33,6 +33,12 @@ export default {
                 .replace(',', ''); // Remove the comma after the weekday
             console.log(formattedDate);
             return formattedDate;
+        },
+
+        desiredDateHandler(bim){
+            this.desiredDate.setDate(this.desiredDate.getDate() + bim);
+            this.dateOffset += bim;
+            console.log(this.desiredDate);
         },
 
         findUnicafeDate(list) {
@@ -64,19 +70,36 @@ export default {
                     menu.classList.toggle("activeMenu");
                 }
             });
-        }
+        },
+
+        getLunchData(restaurant) {
+    if (restaurant.name === 'Unicafe') {
+      const dateIndex = this.findUnicafeDate(restaurant.menu[18].menuData.menus);
+      const data = restaurant.menu[18].menuData.menus[dateIndex].data;
+      
+      return data.filter(lunch => lunch);
+    } 
+    else {
+      const data = restaurant.menu.MenusForDays[0+this.dateOffset].SetMenus;
+      return data.filter(lunchtype => lunchtype);
+    }
+  },
 
     },
 
     mounted() {
-
+        this.fetchRestaurants({ date: this.formatDate(this.desiredDate) });
     }
 }
 </script>
 
 <template>
     
-    <div id="dateSelector"></div>
+    <div id="dateSelector">
+        <button @click="desiredDateHandler(-1)">Previous day</button>
+        <div>{{ desiredDate }}</div>
+        <button @click="desiredDateHandler(1)">Next day</button>
+    </div>
 
     <!-- Checks if restaurant data has been fetched before looping -->
     <div id="flexBox" v-if="isDataFetched">
@@ -91,7 +114,7 @@ export default {
             -->
             <div v-if="restaurant.name === 'Unicafe'" class="foodContainer">
                 <ul class="lunchType"
-                    v-for="lunch in restaurant.menu[18].menuData.menus[this.findUnicafeDate(restaurant.menu[18].menuData.menus)].data"
+                    v-for="lunch in getLunchData(restaurant)"
                     :key="lunch">
                     <!-- {{ lunch.price.name }} -->
                     <li v-if="lunch" class="menuItem" v-text="lunch.name"></li>
@@ -99,7 +122,7 @@ export default {
             </div>
 
             <div v-else class="foodContainer">
-                <ul class="lunchType" v-for="lunchtype in restaurant.menu.MenusForDays[0].SetMenus" :key="lunchtype">
+                <ul class="lunchType" v-for="lunchtype in getLunchData(restaurant)" :key="lunchtype">
                     <!-- {{ lunchtype.Name }} -->
                     <li v-if="lunchtype" class="menuItem" v-for="option in lunchtype.Components" :key="option" v-text="option"></li>
                 </ul>
@@ -145,7 +168,19 @@ export default {
     z-index: 0;
 }
 
-.menuItem {}
+#dateSelector {
+    position: absolute;
+    top: 5vh;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    display: flex;
+    flex-direction: row;
+    gap: 5%;
+    align-items: center;
+    height: 10vh;
+    background-color: white;
+    margin:5%;
+}
 
 
 .foodContainer {
