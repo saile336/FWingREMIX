@@ -6,6 +6,7 @@ import Navbar from "./components/Navbar.vue";
 import FetchMenu from "./components/FetchMenu.vue";
 import Classes from "./components/Classes.vue";
 import Settings from "./components/Settings.vue";
+import Widgets from "./components/Widgets.vue";
 //import Register from "./components/Register.vue";
 
 export default {
@@ -28,6 +29,7 @@ export default {
     FetchMenu,
     Classes,
     Settings,
+    Widgets,
     // Register,
   },
   methods: {
@@ -95,25 +97,6 @@ export default {
     },
   },
 
-  computed: {
-    associationColor() {
-      const associations = JSON.parse(localStorage.getItem("Associations"));
-      let backgroundColor = "rgb(30, 34, 170)"; // Default color
-
-      if (associations) {
-        if (associations.TLK) backgroundColor = "rgb(30, 34, 170)";
-        if (associations.Hanse) backgroundColor = "rgb(255, 165, 0)";
-        if (associations.Hosk) backgroundColor = "rgb(60, 179, 113)";
-        if (associations.Kult) backgroundColor = "rgb(94,189,179,255)";
-        if (associations.Commedia) backgroundColor = "rgb(255, 0, 0)";
-      }
-
-      // Update the background color here
-      document.body.style.backgroundColor = backgroundColor;
-
-      return backgroundColor;
-    },
-  },
   watch: {
     associationColor(newValue) {
       // Update the background color when associationColor changes
@@ -136,7 +119,9 @@ export default {
     <!--<div id="register">
             <Register />
         </div>-->
-
+    <div v-show="currentPage === 'home'" id="homePage">
+      <Widgets />
+    </div>
     <div v-show="currentPage === 'events'" id="kidePage">
       <FetchKide :bim="kideOrg" />
     </div>
