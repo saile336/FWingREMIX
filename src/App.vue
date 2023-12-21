@@ -38,18 +38,28 @@ export default {
   },
   methods: {
     checkUsername() {
-  this.usernameCheckInProgress = true;
-  axios.get(`http://localhost:3000/api/checkUsername/${this.enteredUsername}`)
-    .then(response => {
-      this.usernameCheckInProgress = false;
-      this.usernameExists = response.data.exists;
-      console.log('Response data:', response.data); // Log the response data
-    })
-    .catch(error => {
-      this.usernameCheckInProgress = false;
-      console.error('Error during username check:', error);
-    });
-},
+    this.usernameCheckInProgress = true;
+    axios.get(`http://localhost:3000/api/checkUsername/${this.enteredUsername}`)
+      .then(response => {
+        this.usernameCheckInProgress = false;
+        this.usernameExists = response.data.exists;
+        console.log('Response data:', response.data); // Log the response data
+        if (this.usernameExists) {
+          // Save the user ID in local storage
+          localStorage.setItem('userId', response.data.user.user_id);
+        }
+      })
+      .catch(error => {
+        this.usernameCheckInProgress = false;
+        console.error('Error during username check:', error);
+      });
+  },
+  
+  getCurrentUserId() {
+    // Retrieve the user ID from local storage
+    return localStorage.getItem('userId');
+  },
+
     isMobile() {
       return /Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(
         navigator.userAgent
