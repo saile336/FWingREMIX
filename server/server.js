@@ -1,3 +1,4 @@
+require('dotenv').config({ path: '../.env' });
 const express = require('express');
 const bodyParser = require('body-parser');
 const cors = require('cors');
@@ -6,8 +7,8 @@ const app = express();
 const port = 3000;
 
 app.use(cors({
-    origin: 'http://localhost:5173', // Match the Vue app's URL
-    credentials: true,
+    origin: 'http://localhost:5173', // Match the Vue app's URL. problem då server driftsätts? Länkarna måste iaf ändras i vue komponenter som kopplar sig localhost:3000 (register och fetch komponenter).
+    credentials: true,                                                                          // skapa env variabel istället för att byta ut localhost:3000 manuellt överallt?
 }));
 
 app.use(bodyParser.json());
@@ -20,11 +21,11 @@ app.get('/api/test', (req, res) => {
 //Database connection
 const { Pool } = require('pg');
 const pool = new Pool({
-    user: 'wpheylxg',
-    host: 'cornelius.db.elephantsql.com',
-    database: 'wpheylxg',
-    password: 'kolla elephantsql',
-    port: 5432,
+    user: process.env.PGUSER,
+    host: process.env.PGHOST,
+    database: process.env.PGDATABASE,
+    password: process.env.PGPASSWORD,
+    port: process.env.PGPORT,
 });
 
 //Test db connection in console
@@ -62,6 +63,41 @@ app.get('/api/get', async (req, res) => {
         res.status(500).json({ message: 'Internal server error' });
     }
 });
+const createTableQuery = `
+  CREATE TABLE IF NOT EXISTS users (
+    id SERIAL PRIMARY KEY,
+    username VARCHAR(50) NOT NULL
+  );
+`;
+
+pool.query(createTableQuery, (err, result) => {
+    if (err) {
+        console.error('Error creating table:', err);
+    } else {
+        console.log('Table created successfully');
+    }
+});
+
+// Insert data into the table
+app.post('api/addUser', (req, res) => {
+    const { username } = req.body;
+
+    const insertQuery = `
+      INSERT INTO users (username)
+      VALUES ($1)
+      RETURNING *;
+    `;
+
+    pool.query(insertQuery, [username], (err, result) => {
+        if (err) {
+            console.error('Error inserting data:', err);
+            res.status(500).send('Error inserting data');
+        } else {
+            const newUser = result.rows[0];
+            res.json({ username: newUser.username });
+        }
+    });
+});
 
 
 //Organisationer för kide fetch
@@ -78,7 +114,7 @@ let orgs = {
         kideData: {}
     },
 
-    Hosk:{
+    Hosk: {
         kideUrl: "https://api.kide.app/api/companies/45719a1d-a1ef-44a5-ab61-3d81f23614b5",
         kideData: {}
     },
@@ -131,7 +167,7 @@ app.get('/api/getKide', async (req, res) => {
 app.get('/api/getKide/:name', async (req, res) => {
     const name = req.params.name;
 
-    const data = {name: orgs[name]} ;
+    const data = { name: orgs[name] };
 
     res.send(data);
 });

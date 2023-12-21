@@ -1,43 +1,62 @@
+
 <template>
     <div>
-        <h2>Register</h2>
-        <form @submit.prevent="registerUser">
-
-            <label>Username:</label>
-            <input v-model="username" required>
-
-            <button type="submit">Register</button>
-        </form>
-    </div>
-</template>
+      <form @submit.prevent="registerUser">
+        <label for="username">Username:</label>
+        <input v-model="formData.username" type="text" id="username" name="username" required>
   
-<script>
-export default {
+        <button type="submit">Add User</button>
+      </form>
+  
+      <p v-if="successMessage">{{ successMessage }}</p>
+      <p v-if="errorMessage" style="color: red;">{{ errorMessage }}</p>
+    </div>
+  </template>
+  
+  <script>
+  export default {
     data() {
-        return {
-            username: '',
-        };
+      return {
+        formData: {
+          username: '',
+        },
+        successMessage: '',
+        errorMessage: '',
+      };
     },
     methods: {
-        async registerUser() {
-            try {
-                const response = await fetch('http://localhost:3000/api/register', {
-                    method: 'POST',
-                    headers: {
-                        'Content-Type': 'application/json',
-                    },
-                    body: JSON.stringify({
-                        username: this.username,
-                    }),
-                });
+    registerUser() {
+      const { username } = this.formData;
 
-                const data = await response.json();
-                console.log('Registration response:', data);
+      
+      const apiUrl = 'http://localhost:3000/api/addUser';
 
-            } catch (error) {
-                console.error('Registration error:', error);
-            }
+      // Making a POST request to add a user
+      fetch(apiUrl, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
         },
+        body: JSON.stringify({ username }),
+      })
+        .then(response => response.json())
+        .then(data => {
+          if (data.error) {
+            this.errorMessage = `Error: ${data.error}`;
+            this.successMessage = '';
+          } else {
+            this.successMessage = `User added successfully: ${data.username}`;
+            this.errorMessage = '';
+          }
+        })
+        .catch(error => {
+          this.errorMessage = `Error: ${error.message}`;
+          this.successMessage = '';
+        });
     },
-}
-</script>
+  },
+};
+  </script>
+  
+  <style scoped>
+  </style>

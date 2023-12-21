@@ -30,7 +30,7 @@ export default {
     Classes,
     Settings,
     Widgets,
-    // Register,
+    //Register,
   },
   methods: {
     isMobile() {
@@ -116,11 +116,10 @@ export default {
 
     <img id="logo" :src="logoSrc" alt="logo" />
 
-    <!--<div id="register">
-            <Register />
-        </div>-->
+
     <div v-show="currentPage === 'home'" id="homePage">
       <Widgets />
+      <!-- <Register/> -->
     </div>
     <div v-show="currentPage === 'events'" id="kidePage">
       <FetchKide :bim="kideOrg" />
