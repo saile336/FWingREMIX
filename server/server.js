@@ -64,10 +64,13 @@ app.get('/api/get', async (req, res) => {
     }
 });
 const createTableQuery = `
-  CREATE TABLE IF NOT EXISTS users (
-    id SERIAL PRIMARY KEY,
-    username VARCHAR(50) NOT NULL
-  );
+CREATE TABLE IF NOT EXISTS user_settings (
+    user_id SERIAL PRIMARY KEY,
+    username VARCHAR(50) UNIQUE NOT NULL,
+    diets JSONB,
+    widgets JSONB,
+    associations JSONB
+);
 `;
 
 pool.query(createTableQuery, (err, result) => {
@@ -77,7 +80,26 @@ pool.query(createTableQuery, (err, result) => {
         console.log('Table created successfully');
     }
 });
-
+// Check if username exists
+app.get('/api/checkUsername/:username', async (req, res) => {
+    const sanitizedUsername = req.params.username.replace(/[^a-z0-9\_\-]/gi, '');
+    if (sanitizedUsername) {
+        try {
+            // Adjust the query for case-insensitive comparison if needed
+            const result = await pool.query('SELECT * FROM user_settings WHERE LOWER(username) = LOWER($1)', [sanitizedUsername]);
+            if (result.rows.length > 0) {
+                res.json({ exists: true, user: result.rows[0] });
+            } else {
+                res.json({ exists: false });
+            }
+        } catch (err) {
+            console.error('Error executing query', err.stack);
+            res.status(500).json({ message: 'Internal server error' });
+        }
+    } else {
+        res.status(400).json({ message: 'Invalid username format' });
+    }
+});
 // Insert data into the table
 app.post('api/addUser', (req, res) => {
     const { username } = req.body;

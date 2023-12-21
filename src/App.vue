@@ -1,4 +1,5 @@
 <script>
+import axios from 'axios';
 import TheClock from "./components/TheClock.vue";
 import FetchKide from "./components/FetchKide.vue";
 import DBTest from "./components/DBTest.vue";
@@ -15,6 +16,9 @@ export default {
       kideOrg: "",
       currentPage: "home",
       logoSrc: "src/assets/images/logos/TLK.png",
+      enteredUsername: '', // Added data property for username input
+      usernameCheckInProgress: false,
+      usernameExists: false,
     };
   },
   mounted() {
@@ -33,11 +37,25 @@ export default {
     //Register,
   },
   methods: {
+    checkUsername() {
+  this.usernameCheckInProgress = true;
+  axios.get(`http://localhost:3000/api/checkUsername/${this.enteredUsername}`)
+    .then(response => {
+      this.usernameCheckInProgress = false;
+      this.usernameExists = response.data.exists;
+      console.log('Response data:', response.data); // Log the response data
+    })
+    .catch(error => {
+      this.usernameCheckInProgress = false;
+      console.error('Error during username check:', error);
+    });
+},
     isMobile() {
       return /Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(
         navigator.userAgent
       );
     },
+    
     updatePage(page) {
       this.currentPage = page;
     },
@@ -82,6 +100,7 @@ export default {
       document.body.style.backgroundColor = backgroundColor;
       document.body.style.navColor = navColor;
     },
+    
     loadAssociationLogoAndColor() {
       const savedAssociations = localStorage.getItem("Associations");
       if (savedAssociations) {
@@ -133,7 +152,12 @@ export default {
       <Classes />
     </div>
     <div v-show="currentPage === 'settings'" id="settingsPage">
+      <input type="text" v-model="enteredUsername" placeholder="Enter your username">
+      <button :disabled="usernameCheckInProgress" @click="checkUsername">Check Username</button>
+      <div v-if="usernameExists">Username exists!</div>
+      <div v-else-if="!usernameExists && !usernameCheckInProgress">Username does not exist.</div>
       <Settings @associationSelected="updateAssociation" />
+      
     </div>
 
     <div id="theClock" v-if="!isMobile()">
