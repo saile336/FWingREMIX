@@ -16,7 +16,7 @@ See [Vite Configuration Reference](https://vitejs.dev/config/).
 npm install
 ```
 ```sh
-npx prisma generate
+~~npx prisma generate~~
 ```
 
 ### Compile and Hot-Reload for Development
