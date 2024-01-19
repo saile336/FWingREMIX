@@ -111,7 +111,6 @@ export default {
 
 <template>
   <div>
-    <div :style="{ backgroundColor: associationColor }"></div>
     <h1 id="title" v-show="currentPage === 'home'">Arcad<span>A</span>pp</h1>
 
     <img id="logo" :src="logoSrc" alt="logo" />
