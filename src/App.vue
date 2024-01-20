@@ -121,7 +121,7 @@ export default {
       <!-- <Register/> -->
     </div>
     <div v-show="currentPage === 'events'" id="kidePage">
-      <FetchKide :bim="kideOrg" />
+      <FetchKide :bim="kideOrg" :widgetMode="false" />
     </div>
 
     <div v-show="currentPage === 'restaurants'" id="menuPage">
