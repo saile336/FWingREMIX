@@ -54,11 +54,38 @@ export default {
         console.error('Error during username check:', error);
       });
   },
-  
-  getCurrentUserId() {
+  loginUser() {
+        this.usernameCheckInProgress = true;
+
+        axios.post('http://localhost:3000/api/login', {
+            username: this.enteredUsername,
+        })
+        .then(response => {
+            this.usernameCheckInProgress = false;
+            
+            if (response.data.login) {
+                // Save the user ID in local storage
+                localStorage.setItem('userId', response.data.user_id);
+                // Optionally, save other user information if needed
+                localStorage.setItem('user', JSON.stringify(response.data.user));
+                
+                // You can perform additional actions upon successful login
+                // For example, display a success message or navigate to another page
+                console.log('Login successful');
+            } else {
+                // Handle failed login
+                console.error('Invalid credentials');
+            }
+        })
+        .catch(error => {
+            this.usernameCheckInProgress = false;
+            console.error('Error during login:', error);
+        });
+    },
+  /*getCurrentUserId() {
     // Retrieve the user ID from local storage
     return localStorage.getItem('userId');
-  },
+  },*/
 
     isMobile() {
       return /Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(
@@ -166,6 +193,9 @@ export default {
       <button :disabled="usernameCheckInProgress" @click="checkUsername">Check Username</button>
       <div v-if="usernameExists">Username exists!</div>
       <div v-else-if="!usernameExists && !usernameCheckInProgress">Username does not exist.</div>
+      <!-- OBS! v-model = enteredUsername så skriv i båda fälten :P -->
+      <input type="text" v-model="enteredUsername" placeholder="Login with username">
+      <button class="action-button" @click="loginUser">Login</button>
       <Settings @associationSelected="updateAssociation" />
       
     </div>

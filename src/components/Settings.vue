@@ -37,6 +37,7 @@
                 {{ association }}
             </button>
         </div>
+        <button class="action-button" @click="updateUserSettings">Update User Settings</button>
     </div>
 </template>
 
@@ -106,6 +107,32 @@ export default {
             localStorage.setItem('Associations', JSON.stringify(this.associations));
             this.$emit('associationSelected', association);
         },
+     async updateUserSettings() {
+      const user_id = localStorage.getItem('userId'); 
+      const widgets = localStorage.getItem('Widgets'); 
+      const diets = localStorage.getItem('Diets');
+      const associations = localStorage.getItem('Associations');
+
+      try {
+        const response = await fetch('http://localhost:3000/api/updateUserSettings', {
+            method: 'PUT',
+            headers: {
+                'Content-Type': 'application/json',
+            },
+            body: JSON.stringify({ user_id, widgets, diets, associations }),
+        });
+
+        const result = await response.json();
+
+        if (result.rowsAffected > 0) {
+            console.log('User settings update successful');
+        } else {
+            console.error('User settings update failed');
+        }
+    } catch (error) {
+        console.error('Error updating user settings', error);
+    }
+    },
     },
     mounted() {
         // Load saved settings from local storage on component mount

@@ -100,6 +100,25 @@ app.get('/api/checkUsername/:username', async (req, res) => {
         res.status(400).json({ message: 'Invalid username format' });
     }
 });
+//Inloggning med username
+app.post('/api/login', async (req, res) => {
+    const { username } = req.body;
+
+    try {
+    
+        const result = await pool.query('SELECT * FROM user_settings WHERE LOWER(username) = LOWER($1)', [username]);
+
+        if (result.rows.length > 0) {
+            const user = result.rows[0];
+            res.json({ login: true, user_id: user.user_id });
+        } else {
+            res.json({ login: false, message: 'Invalid credentials' });
+        }
+    } catch (err) {
+        console.error('Error executing query', err.stack);
+        res.status(500).json({ message: 'Internal server error' });
+    }
+});
 // Insert data into the table
 app.post('api/addUser', (req, res) => {
     const { username } = req.body;
@@ -121,7 +140,19 @@ app.post('api/addUser', (req, res) => {
     });
 });
 
+app.put('/api/updateUserSettings', async (req, res) => {
+    const { user_id, widgets, diets, associations } = req.body;
 
+    try {
+        const result = await pool.query('UPDATE user_settings SET widgets = $1, diets = $2, associations = $3 WHERE user_id = $4', [widgets, diets, associations, user_id]);
+        //console.log('Update Query:', 'UPDATE user_settings SET widgets = $1, diets = $2, associations = $3 WHERE user_id = $4', [widgets, diets, associations, user_id]);
+
+        res.json({ message: 'User settings update successful', rowsAffected: result.rowCount });
+    } catch (err) {
+        console.error('Error executing query', err.stack);
+        res.status(500).json({ message: 'Internal server error' });
+    }
+});
 //Organisationer för kide fetch
 let orgs = {
     TLK:
