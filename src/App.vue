@@ -1,4 +1,5 @@
 <script>
+import axios from 'axios';
 import TheClock from "./components/TheClock.vue";
 import FetchKide from "./components/FetchKide.vue";
 import DBTest from "./components/DBTest.vue";
@@ -15,6 +16,9 @@ export default {
       kideOrg: "",
       currentPage: "home",
       logoSrc: "src/assets/images/logos/TLK.png",
+      enteredUsername: '', // Added data property for username input
+      usernameCheckInProgress: false,
+      usernameExists: false,
     };
   },
   mounted() {
@@ -33,11 +37,60 @@ export default {
     //Register,
   },
   methods: {
+    checkUsername() {
+    this.usernameCheckInProgress = true;
+    axios.get(`http://localhost:3000/api/checkUsername/${this.enteredUsername}`)
+      .then(response => {
+        this.usernameCheckInProgress = false;
+        this.usernameExists = response.data.exists;
+        console.log('Response data:', response.data); // Log the response data
+        if (this.usernameExists) {
+          // Save the user ID in local storage
+          localStorage.setItem('userId', response.data.user.user_id);
+        }
+      })
+      .catch(error => {
+        this.usernameCheckInProgress = false;
+        console.error('Error during username check:', error);
+      });
+  },
+  loginUser() {
+        this.usernameCheckInProgress = true;
+
+        axios.post('http://localhost:3000/api/login', {
+            username: this.enteredUsername,
+        })
+        .then(response => {
+            this.usernameCheckInProgress = false;
+            
+            if (response.data.login) {
+                
+                localStorage.setItem('userId', response.data.user_id);
+               
+                localStorage.setItem('user', JSON.stringify(response.data.user));
+                
+                console.log('Login successful');
+            } else {
+               
+                console.error('Invalid credentials');
+            }
+        })
+        .catch(error => {
+            this.usernameCheckInProgress = false;
+            console.error('Error during login:', error);
+        });
+    },
+  /*getCurrentUserId() {
+    // Retrieve the user ID from local storage
+    return localStorage.getItem('userId');
+  },*/
+
     isMobile() {
       return /Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(
         navigator.userAgent
       );
     },
+    
     updatePage(page) {
       this.currentPage = page;
     },
@@ -82,6 +135,7 @@ export default {
       document.body.style.backgroundColor = backgroundColor;
       document.body.style.navColor = navColor;
     },
+    
     loadAssociationLogoAndColor() {
       const savedAssociations = localStorage.getItem("Associations");
       if (savedAssociations) {
@@ -132,7 +186,15 @@ export default {
       <Classes />
     </div>
     <div v-show="currentPage === 'settings'" id="settingsPage">
+      <input type="text" v-model="enteredUsername" placeholder="Enter your username">
+      <button :disabled="usernameCheckInProgress" @click="checkUsername">Check Username</button>
+      <div v-if="usernameExists">Username exists!</div>
+      <div v-else-if="!usernameExists && !usernameCheckInProgress">Username does not exist.</div>
+      <!-- OBS! v-model = enteredUsername så skriv i båda fälten :P -->
+      <input type="text" v-model="enteredUsername" placeholder="Login with username">
+      <button class="action-button" @click="loginUser">Login</button>
       <Settings @associationSelected="updateAssociation" />
+      
     </div>
 
     <div id="theClock" v-if="!isMobile()">

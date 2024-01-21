@@ -64,10 +64,13 @@ app.get('/api/get', async (req, res) => {
     }
 });
 const createTableQuery = `
-  CREATE TABLE IF NOT EXISTS users (
-    id SERIAL PRIMARY KEY,
-    username VARCHAR(50) NOT NULL
-  );
+CREATE TABLE IF NOT EXISTS user_settings (
+    user_id SERIAL PRIMARY KEY,
+    username VARCHAR(50) UNIQUE NOT NULL,
+    diets JSONB,
+    widgets JSONB,
+    associations JSONB
+);
 `;
 
 pool.query(createTableQuery, (err, result) => {
@@ -77,7 +80,45 @@ pool.query(createTableQuery, (err, result) => {
         console.log('Table created successfully');
     }
 });
+// Check if username exists
+app.get('/api/checkUsername/:username', async (req, res) => {
+    const sanitizedUsername = req.params.username.replace(/[^a-z0-9\_\-]/gi, '');
+    if (sanitizedUsername) {
+        try {
+            // Adjust the query for case-insensitive comparison if needed
+            const result = await pool.query('SELECT * FROM user_settings WHERE LOWER(username) = LOWER($1)', [sanitizedUsername]);
+            if (result.rows.length > 0) {
+                res.json({ exists: true, user: result.rows[0] });
+            } else {
+                res.json({ exists: false });
+            }
+        } catch (err) {
+            console.error('Error executing query', err.stack);
+            res.status(500).json({ message: 'Internal server error' });
+        }
+    } else {
+        res.status(400).json({ message: 'Invalid username format' });
+    }
+});
+//Inloggning med username
+app.post('/api/login', async (req, res) => {
+    const { username } = req.body;
 
+    try {
+    
+        const result = await pool.query('SELECT * FROM user_settings WHERE LOWER(username) = LOWER($1)', [username]);
+
+        if (result.rows.length > 0) {
+            const user = result.rows[0];
+            res.json({ login: true, user_id: user.user_id });
+        } else {
+            res.json({ login: false, message: 'Invalid credentials' });
+        }
+    } catch (err) {
+        console.error('Error executing query', err.stack);
+        res.status(500).json({ message: 'Internal server error' });
+    }
+});
 // Insert data into the table
 app.post('api/addUser', (req, res) => {
     const { username } = req.body;
@@ -99,7 +140,19 @@ app.post('api/addUser', (req, res) => {
     });
 });
 
+app.put('/api/updateUserSettings', async (req, res) => {
+    const { user_id, widgets, diets, associations } = req.body;
 
+    try {
+        const result = await pool.query('UPDATE user_settings SET widgets = $1, diets = $2, associations = $3 WHERE user_id = $4', [widgets, diets, associations, user_id]);
+        //console.log('Update Query:', 'UPDATE user_settings SET widgets = $1, diets = $2, associations = $3 WHERE user_id = $4', [widgets, diets, associations, user_id]);
+
+        res.json({ message: 'User settings update successful', rowsAffected: result.rowCount });
+    } catch (err) {
+        console.error('Error executing query', err.stack);
+        res.status(500).json({ message: 'Internal server error' });
+    }
+});
 //Organisationer för kide fetch
 let orgs = {
     TLK:
