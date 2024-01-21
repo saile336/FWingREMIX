@@ -68,6 +68,7 @@ export default {
                 localStorage.setItem('userId', response.data.user_id);
                
                 localStorage.setItem('user', JSON.stringify(response.data.user));
+                this.fetchUserSettings(response.data.user_id);
                 
                 console.log('Login successful');
             } else {
@@ -79,6 +80,30 @@ export default {
             this.usernameCheckInProgress = false;
             console.error('Error during login:', error);
         });
+    },
+    fetchUserSettings(user_id) {
+        axios.get(`http://localhost:3000/api/getUserSettings/${user_id}`)
+            .then(response => {
+                const userSettings = response.data;
+                localStorage.setItem('userSettings', JSON.stringify(userSettings));
+           
+                if (userSettings.widgets) {
+                    localStorage.setItem('Widgets', JSON.stringify(userSettings.widgets));
+                }
+
+                if (userSettings.diets) {
+                    localStorage.setItem('Diets', JSON.stringify(userSettings.diets));
+                }
+
+                if (userSettings.associations) {
+                    localStorage.setItem('Associations', JSON.stringify(userSettings.associations));
+                }
+
+                console.log('User settings fetched successfully');
+            })
+            .catch(error => {
+                console.error('Error fetching user settings:', error);
+            });
     },
   /*getCurrentUserId() {
     // Retrieve the user ID from local storage

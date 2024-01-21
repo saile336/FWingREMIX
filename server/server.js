@@ -80,6 +80,23 @@ pool.query(createTableQuery, (err, result) => {
         console.log('Table created successfully');
     }
 });
+app.get('/api/getUserSettings/:user_id', async (req, res) => {
+    const user_id = req.params.user_id;
+
+    try {
+        const result = await pool.query('SELECT * FROM user_settings WHERE user_id = $1', [user_id]);
+
+        if (result.rows.length > 0) {
+            const userSettings = result.rows[0];
+            res.json(userSettings);
+        } else {
+            res.status(404).json({ message: 'User settings not found' });
+        }
+    } catch (err) {
+        console.error('Error executing query', err.stack);
+        res.status(500).json({ message: 'Internal server error' });
+    }
+});
 // Check if username exists
 app.get('/api/checkUsername/:username', async (req, res) => {
     const sanitizedUsername = req.params.username.replace(/[^a-z0-9\_\-]/gi, '');
