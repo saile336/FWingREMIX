@@ -64,16 +64,14 @@ export default {
             this.usernameCheckInProgress = false;
             
             if (response.data.login) {
-                // Save the user ID in local storage
+                
                 localStorage.setItem('userId', response.data.user_id);
-                // Optionally, save other user information if needed
+               
                 localStorage.setItem('user', JSON.stringify(response.data.user));
                 
-                // You can perform additional actions upon successful login
-                // For example, display a success message or navigate to another page
                 console.log('Login successful');
             } else {
-                // Handle failed login
+               
                 console.error('Invalid credentials');
             }
         })
