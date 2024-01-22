@@ -1,4 +1,5 @@
 <script>
+import axios from 'axios';
 import TheClock from "./components/TheClock.vue";
 import FetchKide from "./components/FetchKide.vue";
 import DBTest from "./components/DBTest.vue";
@@ -6,6 +7,7 @@ import Navbar from "./components/Navbar.vue";
 import FetchMenu from "./components/FetchMenu.vue";
 import Classes from "./components/Classes.vue";
 import Settings from "./components/Settings.vue";
+import Widgets from "./components/Widgets.vue";
 //import Register from "./components/Register.vue";
 
 export default {
@@ -14,6 +16,9 @@ export default {
       kideOrg: "",
       currentPage: "home",
       logoSrc: "src/assets/images/logos/TLK.png",
+      enteredUsername: '', // Added data property for username input
+      usernameCheckInProgress: false,
+      usernameExists: false,
     };
   },
   mounted() {
@@ -28,14 +33,89 @@ export default {
     FetchMenu,
     Classes,
     Settings,
-    // Register,
+    Widgets,
+    //Register,
   },
   methods: {
+    checkUsername() {
+    this.usernameCheckInProgress = true;
+    axios.get(`http://localhost:3000/api/checkUsername/${this.enteredUsername}`)
+      .then(response => {
+        this.usernameCheckInProgress = false;
+        this.usernameExists = response.data.exists;
+        console.log('Response data:', response.data); // Log the response data
+        if (this.usernameExists) {
+          // Save the user ID in local storage
+          localStorage.setItem('userId', response.data.user.user_id);
+        }
+      })
+      .catch(error => {
+        this.usernameCheckInProgress = false;
+        console.error('Error during username check:', error);
+      });
+  },
+  loginUser() {
+        this.usernameCheckInProgress = true;
+
+        axios.post('http://localhost:3000/api/login', {
+            username: this.enteredUsername,
+        })
+        .then(response => {
+            this.usernameCheckInProgress = false;
+            
+            if (response.data.login) {
+                
+                localStorage.setItem('userId', response.data.user_id);
+               
+                localStorage.setItem('user', JSON.stringify(response.data.user));
+                this.fetchUserSettings(response.data.user_id);
+                
+                console.log('Login successful');
+            } else {
+               
+                console.error('Invalid credentials');
+            }
+        })
+        .catch(error => {
+            this.usernameCheckInProgress = false;
+            console.error('Error during login:', error);
+        });
+    },
+    fetchUserSettings(user_id) {
+        axios.get(`http://localhost:3000/api/getUserSettings/${user_id}`)
+            .then(response => {
+                const userSettings = response.data;
+                localStorage.setItem('userSettings', JSON.stringify(userSettings));
+           
+                if (userSettings.widgets) {
+                    localStorage.setItem('Widgets', JSON.stringify(userSettings.widgets));
+                }
+
+                if (userSettings.diets) {
+                    localStorage.setItem('Diets', JSON.stringify(userSettings.diets));
+                }
+
+                if (userSettings.associations) {
+                    localStorage.setItem('Associations', JSON.stringify(userSettings.associations));
+                }
+
+                console.log('User settings fetched successfully');
+            })
+            .catch(error => {
+                console.error('Error fetching user settings:', error);
+            });
+    },
+  /*getCurrentUserId() {
+    // Retrieve the user ID from local storage
+    return localStorage.getItem('userId');
+  },*/
+
     isMobile() {
       return /Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(
         navigator.userAgent
       );
     },
+    
     updatePage(page) {
       this.currentPage = page;
     },
@@ -57,7 +137,7 @@ export default {
           backgroundColor = "rgb(30, 34, 170)";
           navColor = "#4b4ebb";
           break;
-        case "Hanse":
+        case "HanSe":
           backgroundColor = "rgb(250,225,22)";
           navColor = "#ceba17";
           break;
@@ -80,6 +160,7 @@ export default {
       document.body.style.backgroundColor = backgroundColor;
       document.body.style.navColor = navColor;
     },
+    
     loadAssociationLogoAndColor() {
       const savedAssociations = localStorage.getItem("Associations");
       if (savedAssociations) {
@@ -95,25 +176,6 @@ export default {
     },
   },
 
-  computed: {
-    associationColor() {
-      const associations = JSON.parse(localStorage.getItem("Associations"));
-      let backgroundColor = "rgb(30, 34, 170)"; // Default color
-
-      if (associations) {
-        if (associations.TLK) backgroundColor = "rgb(30, 34, 170)";
-        if (associations.Hanse) backgroundColor = "rgb(255, 165, 0)";
-        if (associations.Hosk) backgroundColor = "rgb(60, 179, 113)";
-        if (associations.Kult) backgroundColor = "rgb(94,189,179,255)";
-        if (associations.Commedia) backgroundColor = "rgb(255, 0, 0)";
-      }
-
-      // Update the background color here
-      document.body.style.backgroundColor = backgroundColor;
-
-      return backgroundColor;
-    },
-  },
   watch: {
     associationColor(newValue) {
       // Update the background color when associationColor changes
@@ -128,21 +190,17 @@ export default {
 
 <template>
   <div>
-    <div :style="{ backgroundColor: associationColor }"></div>
     <h1 id="title" v-show="currentPage === 'home'">Arcad<span>A</span>pp</h1>
 
     <img id="logo" :src="logoSrc" alt="logo" />
 
-    <div id="dbTest">
-      <DBTest />
-      <!-- hidden behind other shit but connection to server works, see console-->
-    </div>
-    <!--<div id="register">
-            <Register />
-        </div>-->
 
+    <div v-show="currentPage === 'home'" id="homePage">
+      <Widgets />
+      <!-- <Register/> -->
+    </div>
     <div v-show="currentPage === 'events'" id="kidePage">
-      <FetchKide :bim="kideOrg" />
+      <FetchKide :bim="kideOrg" :widgetMode="false" />
     </div>
 
     <div v-show="currentPage === 'restaurants'" id="menuPage">
@@ -153,7 +211,15 @@ export default {
       <Classes />
     </div>
     <div v-show="currentPage === 'settings'" id="settingsPage">
+      <input type="text" v-model="enteredUsername" placeholder="Enter your username">
+      <button :disabled="usernameCheckInProgress" @click="checkUsername">Check Username</button>
+      <div v-if="usernameExists">Username exists!</div>
+      <div v-else-if="!usernameExists && !usernameCheckInProgress">Username does not exist.</div>
+      <!-- OBS! v-model = enteredUsername så skriv i båda fälten :P -->
+      <input type="text" v-model="enteredUsername" placeholder="Login with username">
+      <button class="action-button" @click="loginUser">Login</button>
       <Settings @associationSelected="updateAssociation" />
+      
     </div>
 
     <div id="theClock" v-if="!isMobile()">

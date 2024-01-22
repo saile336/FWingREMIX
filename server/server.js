@@ -1,76 +1,175 @@
+require('dotenv').config({ path: '../.env' });
 const express = require('express');
 const bodyParser = require('body-parser');
-const { PrismaClient } = require('@prisma/client');
 const cors = require('cors');
 
 const app = express();
 const port = 3000;
 
-const prisma = new PrismaClient()
-
 app.use(cors({
-    origin: 'http://localhost:5173', // Match the Vue app's URL
-    credentials: true,
+    origin: 'http://localhost:5173', // Match the Vue app's URL. problem då server driftsätts? Länkarna måste iaf ändras i vue komponenter som kopplar sig localhost:3000 (register och fetch komponenter).
+    credentials: true,                                                                          // skapa env variabel istället för att byta ut localhost:3000 manuellt överallt?
 }));
+
 app.use(bodyParser.json());
+
 //communication test
 app.get('/api/test', (req, res) => {
     res.json({ message: 'Hello from the server!' });
 });
-app.get('/api/testDatabase', async (req, res) => {
-    try {
-        //database query to check the connection
-        const user = await prisma.users.findFirst();
-        
-        if (user) {
-          res.json({ message: 'Database connection successful' });
-        } else {
-          res.json({ message: 'Database connection failed' });
-        }
-      } catch (error) {
-        console.error('Error testing database connection:', error);
-        res.status(500).json({ error: 'Internal Server Error' });
-      }
+
+//Database connection
+const { Pool } = require('pg');
+const pool = new Pool({
+    user: process.env.PGUSER,
+    host: process.env.PGHOST,
+    database: process.env.PGDATABASE,
+    password: process.env.PGPASSWORD,
+    port: process.env.PGPORT,
 });
-//Fungerande sätt att lägga till user till users collection i db via Register.vue component, however onödigt
-app.post('/api/register', async (req, res) => {
+
+//Test db connection in console
+pool.query('SELECT NOW()', (err, res) => {
+    if (err) {
+        console.error('Error executing query', err.stack);
+    } else {
+        console.log('Connected to database');
+        console.log('Current timestamp:', res.rows[0].now);
+    }
+});
+
+//Template som kan modifieras
+app.put('/api/update', async (req, res) => {
+    const { id, newField } = req.body;
+
+    try {
+        const result = await pool.query('UPDATE myTable SET field = $1 WHERE id = $2', [newField, id]);
+
+        res.json({ message: 'Update successful', rowsAffected: result.rowCount });
+    } catch (err) {
+        console.error('Error executing query', err.stack);
+        res.status(500).json({ message: 'Internal server error' });
+    }
+});
+
+//Template som kan modifieras för get
+app.get('/api/get', async (req, res) => {
+    try {
+        const result = await pool.query('SELECT * FROM myTable');
+
+        res.json(result.rows);
+    } catch (err) {
+        console.error('Error executing query', err.stack);
+        res.status(500).json({ message: 'Internal server error' });
+    }
+});
+const createTableQuery = `
+CREATE TABLE IF NOT EXISTS user_settings (
+    user_id SERIAL PRIMARY KEY,
+    username VARCHAR(50) UNIQUE NOT NULL,
+    diets JSONB,
+    widgets JSONB,
+    associations JSONB
+);
+`;
+
+pool.query(createTableQuery, (err, result) => {
+    if (err) {
+        console.error('Error creating table:', err);
+    } else {
+        console.log('Table created successfully');
+    }
+});
+app.get('/api/getUserSettings/:user_id', async (req, res) => {
+    const user_id = req.params.user_id;
+
+    try {
+        const result = await pool.query('SELECT * FROM user_settings WHERE user_id = $1', [user_id]);
+
+        if (result.rows.length > 0) {
+            const userSettings = result.rows[0];
+            res.json(userSettings);
+        } else {
+            res.status(404).json({ message: 'User settings not found' });
+        }
+    } catch (err) {
+        console.error('Error executing query', err.stack);
+        res.status(500).json({ message: 'Internal server error' });
+    }
+});
+// Check if username exists
+app.get('/api/checkUsername/:username', async (req, res) => {
+    const sanitizedUsername = req.params.username.replace(/[^a-z0-9\_\-]/gi, '');
+    if (sanitizedUsername) {
+        try {
+            // Adjust the query for case-insensitive comparison if needed
+            const result = await pool.query('SELECT * FROM user_settings WHERE LOWER(username) = LOWER($1)', [sanitizedUsername]);
+            if (result.rows.length > 0) {
+                res.json({ exists: true, user: result.rows[0] });
+            } else {
+                res.json({ exists: false });
+            }
+        } catch (err) {
+            console.error('Error executing query', err.stack);
+            res.status(500).json({ message: 'Internal server error' });
+        }
+    } else {
+        res.status(400).json({ message: 'Invalid username format' });
+    }
+});
+//Inloggning med username
+app.post('/api/login', async (req, res) => {
     const { username } = req.body;
 
     try {
-        const newUser = await prisma.users.create({
-            data: {
-                username,
-            },
-        });
+    
+        const result = await pool.query('SELECT * FROM user_settings WHERE LOWER(username) = LOWER($1)', [username]);
 
-        res.json({ message: 'User registered successfully', users: newUser });
-    } catch (error) {
-        console.error('Error registering user:', error);
-        res.status(500).json({ error: 'Internal Server Error' });
+        if (result.rows.length > 0) {
+            const user = result.rows[0];
+            res.json({ login: true, user_id: user.user_id });
+        } else {
+            res.json({ login: false, message: 'Invalid credentials' });
+        }
+    } catch (err) {
+        console.error('Error executing query', err.stack);
+        res.status(500).json({ message: 'Internal server error' });
     }
 });
-// Hitta på hur man kan få ut nödvändig info av en CGI inloggning
-async placeHolder =>{
-const authenticatedUser = {
-    username: '',
-    
-  };
-  
-  // Spara sedan den infon till DB
-  const newUser = await prisma.user.create({
-    data: {
-      username: authenticatedUser.username,
-    },
-  });
-} 
-  // Implementera jwt token?
-  /*
-  const token = jwt.sign({ userId: newUser.id, username: newUser.username }, 'your-secret-key');
-  
-  // Send the token to the client
-  res.json({ token });
-*/
+// Insert data into the table
+app.post('api/addUser', (req, res) => {
+    const { username } = req.body;
 
+    const insertQuery = `
+      INSERT INTO users (username)
+      VALUES ($1)
+      RETURNING *;
+    `;
+
+    pool.query(insertQuery, [username], (err, result) => {
+        if (err) {
+            console.error('Error inserting data:', err);
+            res.status(500).send('Error inserting data');
+        } else {
+            const newUser = result.rows[0];
+            res.json({ username: newUser.username });
+        }
+    });
+});
+
+app.put('/api/updateUserSettings', async (req, res) => {
+    const { user_id, widgets, diets, associations } = req.body;
+
+    try {
+        const result = await pool.query('UPDATE user_settings SET widgets = $1, diets = $2, associations = $3 WHERE user_id = $4', [widgets, diets, associations, user_id]);
+        //console.log('Update Query:', 'UPDATE user_settings SET widgets = $1, diets = $2, associations = $3 WHERE user_id = $4', [widgets, diets, associations, user_id]);
+
+        res.json({ message: 'User settings update successful', rowsAffected: result.rowCount });
+    } catch (err) {
+        console.error('Error executing query', err.stack);
+        res.status(500).json({ message: 'Internal server error' });
+    }
+});
 //Organisationer för kide fetch
 let orgs = {
     TLK:
@@ -82,6 +181,11 @@ let orgs = {
     HanSe:
     {
         kideUrl: "https://api.kide.app/api/companies/90d58532-87be-4a30-b4e3-6053db20caa5",
+        kideData: {}
+    },
+
+    Hosk: {
+        kideUrl: "https://api.kide.app/api/companies/45719a1d-a1ef-44a5-ab61-3d81f23614b5",
         kideData: {}
     },
 
@@ -133,7 +237,7 @@ app.get('/api/getKide', async (req, res) => {
 app.get('/api/getKide/:name', async (req, res) => {
     const name = req.params.name;
 
-    const data = orgs[name];
+    const data = { name: orgs[name] };
 
     res.send(data);
 });

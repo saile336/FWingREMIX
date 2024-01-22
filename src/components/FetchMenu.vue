@@ -8,7 +8,7 @@ export default {
             },
             isDataFetched: false,
             desiredDate: new Date(),
-            todayIsWeekend: false,
+            dateOffset: 0,
         }
     },
 
@@ -25,13 +25,20 @@ export default {
         },
 
         formatDate(date) {
-
-            //Formats raw date into 'Weekday, DD.MM.'
-            const options = { weekday: 'short', day: 'numeric', month: 'numeric' };
-            const formattedDate = date.toLocaleDateString('sv-SE', options)
-                .replace(/(\d{2})\/(\d{2})/, '$1.$2.')
-                .replace(/^\w/, c => c.toUpperCase());
+            // Formats raw date into 'Weekday DD.MM.'
+            const options = { weekday: 'short', day: '2-digit', month: 'numeric' };
+            const formattedDate = date.toLocaleDateString('en-US', options)
+                .replace(/(\d{1,2})\/(\d{1,2})/, '$2.$1.') // Swap the positions of day and month
+                .replace(/^\w/, c => c.toUpperCase())
+                .replace(',', ''); // Remove the comma after the weekday
+            console.log(formattedDate);
             return formattedDate;
+        },
+
+        desiredDateHandler(bim){
+            this.desiredDate.setDate(this.desiredDate.getDate() + bim);
+            this.dateOffset += bim;
+            console.log(this.desiredDate);
         },
 
         findUnicafeDate(list) {
@@ -63,31 +70,39 @@ export default {
                     menu.classList.toggle("activeMenu");
                 }
             });
-        }
+        },
+
+        getLunchData(restaurant) {
+    if (restaurant.name === 'Unicafe') {
+      const dateIndex = this.findUnicafeDate(restaurant.menu[18].menuData.menus);
+      const data = restaurant.menu[18].menuData.menus[dateIndex].data;
+      
+      return data.filter(lunch => lunch);
+    } 
+    else {
+      const data = restaurant.menu.MenusForDays[0+this.dateOffset].SetMenus;
+      return data.filter(lunchtype => lunchtype);
+    }
+  },
 
     },
 
     mounted() {
         this.fetchRestaurants({ date: this.formatDate(this.desiredDate) });
-
-        //Checks if today is weekend, if so, displays message
-        if (this.desiredDate.getDay() === 6 || this.desiredDate.getDay() === 0) {
-            this.todayIsWeekend = true;
-        }
     }
 }
 </script>
 
 <template>
-
-    <!-- QUICKFIX FÖR WEEKEND PLEASE FIX -->
-    <div v-if="todayIsWeekend">
-        <h2 style="margin-top: 200px;">AAAAA IT IS THE WEEKEND NO FOOD ://// WAIT FOR MONDAY!!! LASAGNA MMMMMMMM</h2>
+    
+    <div id="dateSelector">
+        <button @click="desiredDateHandler(-1)">Previous day</button>
+        <div>{{ desiredDate }}</div>
+        <button @click="desiredDateHandler(1)">Next day</button>
     </div>
-    <!-- QUICKFIX FÖR WEEKEND PLEASE FIX -->
 
     <!-- Checks if restaurant data has been fetched before looping -->
-    <div id="flexBox" v-else-if="isDataFetched">
+    <div id="flexBox" v-if="isDataFetched">
 
         <!-- Creates separate menu div for each restaurant in restaurantData -->
         <div class="menu" :id="restaurant.name" v-for="restaurant in restaurantData" :key="restaurant"
@@ -99,19 +114,19 @@ export default {
             -->
             <div v-if="restaurant.name === 'Unicafe'" class="foodContainer">
                 <ul class="lunchType"
-                    v-for="lunch in restaurant.menu[18].menuData.menus[this.findUnicafeDate(restaurant.menu[18].menuData.menus)].data"
+                    v-for="lunch in getLunchData(restaurant)"
                     :key="lunch">
-                    {{ lunch.price.name }}
-                    <li class="menuItem" v-text="lunch.name"></li>
+                    <!-- {{ lunch.price.name }} -->
+                    <li v-if="lunch" class="menuItem" v-text="lunch.name"></li>
                 </ul>
             </div>
 
             <div v-else class="foodContainer">
-                <ul class="lunchType" v-for="lunchtype in restaurant.menu.MenusForDays[0].SetMenus" :key="lunchtype">
-                    {{ lunchtype.Name }}
-                    <li class="menuItem" v-for="option in lunchtype.Components" :key="option" v-text="option"></li>
+                <ul class="lunchType" v-for="lunchtype in getLunchData(restaurant)" :key="lunchtype">
+                    <!-- {{ lunchtype.Name }} -->
+                    <li v-if="lunchtype" class="menuItem" v-for="option in lunchtype.Components" :key="option" v-text="option"></li>
                 </ul>
-            </div>
+            </div> 
         </div>
 
     </div>
@@ -153,7 +168,19 @@ export default {
     z-index: 0;
 }
 
-.menuItem {}
+#dateSelector {
+    position: absolute;
+    top: 5vh;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    display: flex;
+    flex-direction: row;
+    gap: 5%;
+    align-items: center;
+    height: 10vh;
+    background-color: white;
+    margin:5%;
+}
 
 
 .foodContainer {
