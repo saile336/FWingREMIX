@@ -19,11 +19,13 @@ export default {
       enteredUsername: '', // Added data property for username input
       usernameCheckInProgress: false,
       usernameExists: false,
+      isLoggedIn: false,
     };
   },
   mounted() {
     // Fetch the logo source from local storage when the component mounts
     this.loadAssociationLogoAndColor();
+    this.checkLogin();
   },
   components: {
     TheClock,
@@ -36,86 +38,110 @@ export default {
     Widgets,
     //Register,
   },
-  methods: {
-    checkUsername() {
-    this.usernameCheckInProgress = true;
-    axios.get(`http://localhost:3000/api/checkUsername/${this.enteredUsername}`)
-      .then(response => {
-        this.usernameCheckInProgress = false;
-        this.usernameExists = response.data.exists;
-        console.log('Response data:', response.data); // Log the response data
-        if (this.usernameExists) {
-          // Save the user ID in local storage
-          localStorage.setItem('userId', response.data.user.user_id);
-        }
-      })
-      .catch(error => {
-        this.usernameCheckInProgress = false;
-        console.error('Error during username check:', error);
-      });
-  },
-  loginUser() {
-        this.usernameCheckInProgress = true;
 
-        axios.post('http://localhost:3000/api/login', {
-            username: this.enteredUsername,
-        })
+  methods: {
+    checkLogin() {
+      // Check if user is already logged in (e.g., by checking local storage)
+      const userId = localStorage.getItem('userId');
+      this.isLoggedIn = !!userId;
+      if (!this.isLoggedIn) {
+        this.promptLogin();
+      }
+    },
+    promptLogin() {
+      const username = prompt("Please enter your username to login:");
+      if (username) {
+        this.enteredUsername = username;
+        this.loginUser();
+      }
+    },
+    checkUsername() {
+      this.usernameCheckInProgress = true;
+      axios.get(`http://localhost:3000/api/checkUsername/${this.enteredUsername}`)
         .then(response => {
-            this.usernameCheckInProgress = false;
-            
-            if (response.data.login) {
-                
-                localStorage.setItem('userId', response.data.user_id);
-               
-                localStorage.setItem('user', JSON.stringify(response.data.user));
-                this.fetchUserSettings(response.data.user_id);
-                
-                console.log('Login successful');
-            } else {
-               
-                console.error('Invalid credentials');
-            }
+          this.usernameCheckInProgress = false;
+          this.usernameExists = response.data.exists;
+          console.log('Response data:', response.data); // Log the response data
+          if (this.usernameExists) {
+            // Save the user ID in local storage
+            localStorage.setItem('userId', response.data.user.user_id);
+          }
         })
         .catch(error => {
-            this.usernameCheckInProgress = false;
-            console.error('Error during login:', error);
+          this.usernameCheckInProgress = false;
+          console.error('Error during username check:', error);
         });
     },
-    fetchUserSettings(user_id) {
-        axios.get(`http://localhost:3000/api/getUserSettings/${user_id}`)
+    loginUser() {
+        axios.post('http://localhost:3000/api/login', { username: this.enteredUsername })
             .then(response => {
-                const userSettings = response.data;
-                localStorage.setItem('userSettings', JSON.stringify(userSettings));
-           
-                if (userSettings.widgets) {
-                    localStorage.setItem('Widgets', JSON.stringify(userSettings.widgets));
+                if (response.data.login) {
+                    // Login successful
+                    localStorage.setItem('userId', response.data.user_id);
+                    localStorage.setItem('user', JSON.stringify(response.data.user));
+                    this.fetchUserSettings(response.data.user_id);
+                    console.log('Login successful');
+                    // Update login state
+                    this.isLoggedIn = true;
+                } else {
+                    // User does not exist, create a new one
+                    this.registerUser();
                 }
-
-                if (userSettings.diets) {
-                    localStorage.setItem('Diets', JSON.stringify(userSettings.diets));
-                }
-
-                if (userSettings.associations) {
-                    localStorage.setItem('Associations', JSON.stringify(userSettings.associations));
-                }
-
-                console.log('User settings fetched successfully');
             })
             .catch(error => {
-                console.error('Error fetching user settings:', error);
+                console.error('Error during login:', error);
             });
     },
-  /*getCurrentUserId() {
-    // Retrieve the user ID from local storage
-    return localStorage.getItem('userId');
-  },*/
+
+    registerUser() {
+        axios.post('http://localhost:3000/api/addUser', { username: this.enteredUsername })
+            .then(response => {
+                if (response.data.user) {
+                    console.log('Registration successful, new user created:', response.data.user);
+                    // Perform login process for the new user
+                    this.loginUser();
+                }
+            })
+            .catch(error => {
+                console.error('Error during registration:', error);
+            });
+    },
+    fetchUserSettings(user_id) {
+      axios.get(`http://localhost:3000/api/getUserSettings/${user_id}`)
+        .then(response => {
+          const userSettings = response.data;
+          localStorage.setItem('userSettings', JSON.stringify(userSettings));
+
+          if (userSettings.widgets) {
+            localStorage.setItem('Widgets', JSON.stringify(userSettings.widgets));
+          }
+
+          if (userSettings.diets) {
+            localStorage.setItem('Diets', JSON.stringify(userSettings.diets));
+          }
+
+          if (userSettings.associations) {
+            localStorage.setItem('Associations', JSON.stringify(userSettings.associations));
+          }
+
+          console.log('User settings fetched successfully');
+        })
+        .catch(error => {
+          console.error('Error fetching user settings:', error);
+        });
+    },
+
+    /*getCurrentUserId() {
+      // Retrieve the user ID from local storage
+      return localStorage.getItem('userId');
+    },*/
 
     isMobile() {
       return /Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(
         navigator.userAgent
       );
     },
-    
+
     updatePage(page) {
       this.currentPage = page;
     },
@@ -160,7 +186,7 @@ export default {
       document.body.style.backgroundColor = backgroundColor;
       document.body.style.navColor = navColor;
     },
-    
+
     loadAssociationLogoAndColor() {
       const savedAssociations = localStorage.getItem("Associations");
       if (savedAssociations) {
@@ -194,32 +220,28 @@ export default {
 
     <img id="logo" :src="logoSrc" alt="logo" />
 
+    <div v-if="!isLoggedIn"></div>
+    <div v-else>
+      <div v-show="currentPage === 'home'" id="homePage">
+        <Widgets />
+        <!-- <Register/> -->
+      </div>
+      <div v-show="currentPage === 'events'" id="kidePage">
+        <FetchKide :bim="kideOrg" :widgetMode="false" />
+      </div>
 
-    <div v-show="currentPage === 'home'" id="homePage">
-      <Widgets />
-      <!-- <Register/> -->
-    </div>
-    <div v-show="currentPage === 'events'" id="kidePage">
-      <FetchKide :bim="kideOrg" :widgetMode="false" />
-    </div>
+      <div v-show="currentPage === 'restaurants'" id="menuPage">
+        <FetchMenu />
+      </div>
 
-    <div v-show="currentPage === 'restaurants'" id="menuPage">
-      <FetchMenu />
-    </div>
-
-    <div v-show="currentPage === 'calendar'" id="calendarPage">
-      <Classes />
-    </div>
-    <div v-show="currentPage === 'settings'" id="settingsPage">
-      <input type="text" v-model="enteredUsername" placeholder="Enter your username">
-      <button :disabled="usernameCheckInProgress" @click="checkUsername">Check Username</button>
-      <div v-if="usernameExists">Username exists!</div>
-      <div v-else-if="!usernameExists && !usernameCheckInProgress">Username does not exist.</div>
-      <!-- OBS! v-model = enteredUsername så skriv i båda fälten :P -->
-      <input type="text" v-model="enteredUsername" placeholder="Login with username">
-      <button class="action-button" @click="loginUser">Login</button>
-      <Settings @associationSelected="updateAssociation" />
+      <div v-show="currentPage === 'calendar'" id="calendarPage">
+        <Classes />
+      </div>
+      <div v-show="currentPage === 'settings'" id="settingsPage">
       
+        <Settings @associationSelected="updateAssociation" />
+
+      </div>
     </div>
 
     <div id="theClock" v-if="!isMobile()">

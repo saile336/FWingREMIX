@@ -122,14 +122,14 @@ app.post('/api/login', async (req, res) => {
     const { username } = req.body;
 
     try {
-    
-        const result = await pool.query('SELECT * FROM user_settings WHERE LOWER(username) = LOWER($1)', [username]);
+        const result = await pool.query('SELECT * FROM user_settings WHERE username = $1', [username]);
 
         if (result.rows.length > 0) {
-            const user = result.rows[0];
-            res.json({ login: true, user_id: user.user_id });
+            // User exists
+            res.json({ login: true, user_id: result.rows[0].user_id, user: result.rows[0] });
         } else {
-            res.json({ login: false, message: 'Invalid credentials' });
+            // User does not exist
+            res.json({ login: false });
         }
     } catch (err) {
         console.error('Error executing query', err.stack);
@@ -137,24 +137,21 @@ app.post('/api/login', async (req, res) => {
     }
 });
 // Insert data into the table
-app.post('api/addUser', (req, res) => {
+app.post('/api/addUser', async (req, res) => {
     const { username } = req.body;
 
-    const insertQuery = `
-      INSERT INTO users (username)
-      VALUES ($1)
-      RETURNING *;
-    `;
+    try {
+        const result = await pool.query('INSERT INTO user_settings (username) VALUES ($1) RETURNING *', [username]);
 
-    pool.query(insertQuery, [username], (err, result) => {
-        if (err) {
-            console.error('Error inserting data:', err);
-            res.status(500).send('Error inserting data');
+        if (result.rows.length > 0) {
+            res.json({ user: result.rows[0] });
         } else {
-            const newUser = result.rows[0];
-            res.json({ username: newUser.username });
+            res.status(500).json({ message: 'Unable to create user' });
         }
-    });
+    } catch (err) {
+        console.error('Error executing query', err.stack);
+        res.status(500).json({ message: 'Internal server error' });
+    }
 });
 
 app.put('/api/updateUserSettings', async (req, res) => {
