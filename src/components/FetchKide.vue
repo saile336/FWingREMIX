@@ -84,7 +84,7 @@ export default {
 </script>
 
 <template>
-    <div id="events" v-if="isDataFetched">
+    <div id="events" v-if="isDataFetched" :style="[widgetMode == true ? {'position': 'static', 'height': '50vh', 'transform':'translate(0, 0)'} : {}]">
         <div class='föreningar' v-for="forening in kideData" :key="forening">
             <div class="event" v-for="event in forening.kideData.model.events" :key="event.id"
                 :style="getBackgroundColor(event.companyName)" @click="clickHandler(event.id)">
@@ -100,7 +100,7 @@ export default {
         </div>
     </div>
 
-    <div id="hoverCont" v-if="this.$parent.isMobile() == false && this.widgetMode == false">
+    <!-- <div id="hoverCont" v-if="this.$parent.isMobile() == false && this.widgetMode == false">
         <div class="hoverEvent">
             <div class="hover-image-container">
                 <img class="hoverImg" />
@@ -110,7 +110,7 @@ export default {
                 </div>
             </div>
         </div>
-    </div>
+    </div> -->
 </template>
 
 <style scoped>
@@ -165,7 +165,7 @@ h2 {
 
 
 .details {
-    font-family:'Franklin Gothic Medium', 'Arial Narrow', Arial, sans-serif;
+    font-family: 'Franklin Gothic Medium', 'Arial Narrow', Arial, sans-serif;
     font-weight: 500;
     display: flex;
     flex-direction: column;
@@ -202,7 +202,6 @@ h2 {
         width: fit-content;
         top: 50%;
         left: 50%;
-        transform: translate(-50%, -55%);
         background-color: rgba(255, 255, 255);
 
         -ms-overflow-style: none;
