@@ -83,6 +83,11 @@ export default {
                     console.log('Login successful');
                     // Update login state
                     this.isLoggedIn = true;
+                    this.fetchUserSettings();
+                    
+                    
+
+                  
                 } else {
                     // User does not exist, create a new one
                     this.registerUser();
@@ -91,6 +96,7 @@ export default {
             .catch(error => {
                 console.error('Error during login:', error);
             });
+            
     },
 
     registerUser() {
