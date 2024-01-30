@@ -73,31 +73,35 @@ export default {
         });
     },
     loginUser() {
-        axios.post('http://localhost:3000/api/login', { username: this.enteredUsername })
-            .then(response => {
-                if (response.data.login) {
-                    // Login successful
-                    localStorage.setItem('userId', response.data.user_id);
-                    localStorage.setItem('user', JSON.stringify(response.data.user));
-                    this.fetchUserSettings(response.data.user_id);
-                    console.log('Login successful');
-                    // Update login state
-                    this.isLoggedIn = true;
-                    this.fetchUserSettings();
-                    
-                    
+    axios.post('http://localhost:3000/api/login', { username: this.enteredUsername })
+        .then(response => {
+            if (response.data.login) {
+                // Login successful
+                localStorage.setItem('userId', response.data.user_id);
+                localStorage.setItem('user', JSON.stringify(response.data.user));
+                console.log('Login successful');
 
-                  
-                } else {
-                    // User does not exist, create a new one
-                    this.registerUser();
-                }
-            })
-            .catch(error => {
-                console.error('Error during login:', error);
-            });
-            
-    },
+                // Fetch user settings, then update the state
+                this.fetchUserSettings(response.data.user_id)
+                    .then(() => {
+                        // Update login state
+                        this.isLoggedIn = true;
+                        console.log('User settings updated and state refreshed');
+                        this.loadAssociationLogoAndColor();
+                    })
+                    
+                    .catch(error => {
+                        console.error('Error fetching user settings:', error);
+                    });
+            } else {
+                // User does not exist, create a new one
+                this.registerUser();
+            }
+        })
+        .catch(error => {
+            console.error('Error during login:', error);
+        });
+},
 
     registerUser() {
         axios.post('http://localhost:3000/api/addUser', { username: this.enteredUsername })
@@ -113,29 +117,34 @@ export default {
             });
     },
     fetchUserSettings(user_id) {
-      axios.get(`http://localhost:3000/api/getUserSettings/${user_id}`)
+    return axios.get(`http://localhost:3000/api/getUserSettings/${user_id}`)
         .then(response => {
-          const userSettings = response.data;
-          localStorage.setItem('userSettings', JSON.stringify(userSettings));
+            const userSettings = response.data;
+            // Update localStorage
+            localStorage.setItem('userSettings', JSON.stringify(userSettings));
 
-          if (userSettings.widgets) {
-            localStorage.setItem('Widgets', JSON.stringify(userSettings.widgets));
-          }
+            // Update state for widgets, diets, and associations
+            if (userSettings.widgets) {
+                localStorage.setItem('Widgets', JSON.stringify(userSettings.widgets));
+            }
+            if (userSettings.diets) {
+                localStorage.setItem('Diets', JSON.stringify(userSettings.diets));
+            }
+            if (userSettings.associations) {
+                localStorage.setItem('Associations', JSON.stringify(userSettings.associations));
+                // Assuming you have methods to update UI based on these settings:
+                this.updateWidgets(userSettings.widgets);
+                this.updateDiets(userSettings.diets);
+                this.updateAssociations(userSettings.associations);
+            }
 
-          if (userSettings.diets) {
-            localStorage.setItem('Diets', JSON.stringify(userSettings.diets));
-          }
-
-          if (userSettings.associations) {
-            localStorage.setItem('Associations', JSON.stringify(userSettings.associations));
-          }
-
-          console.log('User settings fetched successfully');
+            console.log('User settings fetched successfully');
         })
         .catch(error => {
-          console.error('Error fetching user settings:', error);
+            console.error('Error fetching user settings:', error);
         });
-    },
+},
+    
 
     /*getCurrentUserId() {
       // Retrieve the user ID from local storage
