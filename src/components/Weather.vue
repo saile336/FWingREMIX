@@ -61,7 +61,6 @@ export default {
   border-radius: 10px;
   width: 230px;
   box-shadow: 0 0 10px rgba(0, 0, 0, 0.2);
-  margin: 80px;
 }
 img {
   width: 100px;
