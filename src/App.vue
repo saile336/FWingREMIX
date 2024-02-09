@@ -39,99 +39,112 @@ export default {
         //Register,
     },
 
-    methods: {
-        checkLogin() {
-            // Check if user is already logged in (e.g., by checking local storage)
-            const userId = localStorage.getItem('userId');
-            this.isLoggedIn = !!userId;
-            if (!this.isLoggedIn) {
-                this.promptLogin();
-            }
-        },
-        promptLogin() {
-            const username = prompt("Please enter your username to login:");
-            if (username) {
-                this.enteredUsername = username;
-                this.loginUser();
-            }
-        },
-        checkUsername() {
-            this.usernameCheckInProgress = true;
-            axios.get(`http://localhost:3000/api/checkUsername/${this.enteredUsername}`)
-                .then(response => {
-                    this.usernameCheckInProgress = false;
-                    this.usernameExists = response.data.exists;
-                    console.log('Response data:', response.data); // Log the response data
-                    if (this.usernameExists) {
-                        // Save the user ID in local storage
-                        localStorage.setItem('userId', response.data.user.user_id);
-                    }
-                })
-                .catch(error => {
-                    this.usernameCheckInProgress = false;
-                    console.error('Error during username check:', error);
-                });
-        },
-        loginUser() {
-            axios.post('http://localhost:3000/api/login', { username: this.enteredUsername })
-                .then(response => {
-                    if (response.data.login) {
-                        // Login successful
-                        localStorage.setItem('userId', response.data.user_id);
-                        localStorage.setItem('user', JSON.stringify(response.data.user));
-                        this.fetchUserSettings(response.data.user_id);
-                        console.log('Login successful');
+  methods: {
+    checkLogin() {
+      // Check if user is already logged in (e.g., by checking local storage)
+      const userId = localStorage.getItem('userId');
+      this.isLoggedIn = !!userId;
+      if (!this.isLoggedIn) {
+        this.promptLogin();
+      }
+    },
+    promptLogin() {
+      const username = prompt("Please enter your username to login:");
+      if (username) {
+        this.enteredUsername = username;
+        this.loginUser();
+      }
+    },
+    checkUsername() {
+      this.usernameCheckInProgress = true;
+      axios.get(`http://localhost:3000/api/checkUsername/${this.enteredUsername}`)
+        .then(response => {
+          this.usernameCheckInProgress = false;
+          this.usernameExists = response.data.exists;
+          console.log('Response data:', response.data); // Log the response data
+          if (this.usernameExists) {
+            // Save the user ID in local storage
+            localStorage.setItem('userId', response.data.user.user_id);
+          }
+        })
+        .catch(error => {
+          this.usernameCheckInProgress = false;
+          console.error('Error during username check:', error);
+        });
+    },
+    loginUser() {
+    axios.post('http://localhost:3000/api/login', { username: this.enteredUsername })
+        .then(response => {
+            if (response.data.login) {
+                // Login successful
+                localStorage.setItem('userId', response.data.user_id);
+                localStorage.setItem('user', JSON.stringify(response.data.user));
+                console.log('Login successful');
+
+                // Fetch user settings, then update the state
+                this.fetchUserSettings(response.data.user_id)
+                    .then(() => {
                         // Update login state
                         this.isLoggedIn = true;
-                    } else {
-                        // User does not exist, create a new one
-                        this.registerUser();
-                    }
-                })
-                .catch(error => {
-                    console.error('Error during login:', error);
-                    this.isLoggedIn = true;
+                        console.log('User settings updated and state refreshed');
+                        this.loadAssociationLogoAndColor();
+                    })
+                    
+                    .catch(error => {
+                        console.error('Error fetching user settings:', error);
+                    });
+            } else {
+                // User does not exist, create a new one
+                this.registerUser();
+            }
+        })
+        .catch(error => {
+            console.error('Error during login:', error);
+        });
+},
 
-                });
-        },
+    registerUser() {
+        axios.post('http://localhost:3000/api/addUser', { username: this.enteredUsername })
+            .then(response => {
+                if (response.data.user) {
+                    console.log('Registration successful, new user created:', response.data.user);
+                    // Perform login process for the new user
+                    this.loginUser();
+                }
+            })
+            .catch(error => {
+                console.error('Error during registration:', error);
+            });
+    },
+    fetchUserSettings(user_id) {
+    return axios.get(`http://localhost:3000/api/getUserSettings/${user_id}`)
+        .then(response => {
+            const userSettings = response.data;
+            // Update localStorage
+            localStorage.setItem('userSettings', JSON.stringify(userSettings));
 
-        registerUser() {
-            axios.post('http://localhost:3000/api/addUser', { username: this.enteredUsername })
-                .then(response => {
-                    if (response.data.user) {
-                        console.log('Registration successful, new user created:', response.data.user);
-                        // Perform login process for the new user
-                        this.loginUser();
-                    }
-                })
-                .catch(error => {
-                    console.error('Error during registration:', error);
-                });
-        },
-        fetchUserSettings(user_id) {
-            axios.get(`http://localhost:3000/api/getUserSettings/${user_id}`)
-                .then(response => {
-                    const userSettings = response.data;
-                    localStorage.setItem('userSettings', JSON.stringify(userSettings));
+            // Update state for widgets, diets, and associations
+            if (userSettings.widgets) {
+                localStorage.setItem('Widgets', JSON.stringify(userSettings.widgets));
+            }
+            if (userSettings.diets) {
+                localStorage.setItem('Diets', JSON.stringify(userSettings.diets));
+            }
+            if (userSettings.associations) {
+                localStorage.setItem('Associations', JSON.stringify(userSettings.associations));
+                // Assuming you have methods to update UI based on these settings:
+                this.updateWidgets(userSettings.widgets);
+                this.updateDiets(userSettings.diets);
+                this.updateAssociations(userSettings.associations);
+            }
 
-                    if (userSettings.widgets) {
-                        localStorage.setItem('Widgets', JSON.stringify(userSettings.widgets));
-                    }
-
-                    if (userSettings.diets) {
-                        localStorage.setItem('Diets', JSON.stringify(userSettings.diets));
-                    }
-
-                    if (userSettings.associations) {
-                        localStorage.setItem('Associations', JSON.stringify(userSettings.associations));
-                    }
-
-                    console.log('User settings fetched successfully');
-                })
-                .catch(error => {
-                    console.error('Error fetching user settings:', error);
-                });
-        },
+            console.log('User settings fetched successfully');
+        })
+        .catch(error => {
+            console.error('Error fetching user settings:', error);
+        });
+},
+    
 
         /*getCurrentUserId() {
           // Retrieve the user ID from local storage
