@@ -90,7 +90,7 @@ export default {
                 :style="getBackgroundColor(event.companyName)" @click="clickHandler(event.id)">
                 <div class="image-container">
                     <img class="img" :src="imgUrl + event.mediaFilename" />
-                    <div :style="[event.salesStarted === true ? event.availability === 0 ? { 'color': '#5b0000' } : { 'color': '#277027' } : {}]"
+                    <div :style="[event.salesStarted === true ? event.salesOngoing === false ? { 'color': '#820000' } : { 'color': '#277027' } : {}]"
                         class="details">
                         <div class="name">{{ event.name }}</div>
                         <div class="date">{{ new Date(event.dateActualFrom).toLocaleDateString('fi-FI') }}</div>

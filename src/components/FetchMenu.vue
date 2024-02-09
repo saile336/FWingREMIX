@@ -26,7 +26,7 @@ export default {
 
         formatDate(date) {
             // Formats raw date into 'Weekday DD.MM.'
-            const options = { weekday: 'short', day: '2-digit', month: 'numeric' };
+            const options = { weekday: 'short', day: '2-digit', month: '2-digit' };
             const formattedDate = date.toLocaleDateString('en-US', options)
                 .replace(/(\d{1,2})\/(\d{1,2})/, '$2.$1.') // Swap the positions of day and month
                 .replace(/^\w/, c => c.toUpperCase())
@@ -35,7 +35,7 @@ export default {
             return formattedDate;
         },
 
-        desiredDateHandler(bim){
+        desiredDateHandler(bim) {
             this.desiredDate.setDate(this.desiredDate.getDate() + bim);
             this.dateOffset += bim;
             console.log(this.desiredDate);
@@ -73,17 +73,17 @@ export default {
         },
 
         getLunchData(restaurant) {
-    if (restaurant.name === 'Unicafe') {
-      const dateIndex = this.findUnicafeDate(restaurant.menu[18].menuData.menus);
-      const data = restaurant.menu[18].menuData.menus[dateIndex].data;
-      
-      return data.filter(lunch => lunch);
-    } 
-    else {
-      const data = restaurant.menu.MenusForDays[0+this.dateOffset].SetMenus;
-      return data.filter(lunchtype => lunchtype);
-    }
-  },
+            if (restaurant.name === 'Unicafe') {
+                const dateIndex = this.findUnicafeDate(restaurant.menu[18].menuData.menus);
+                const data = restaurant.menu[18].menuData.menus[dateIndex].data;
+
+                return data.filter(lunch => lunch);
+            }
+            else {
+                const data = restaurant.menu.MenusForDays[0 + this.dateOffset].SetMenus;
+                return data.filter(lunchtype => lunchtype);
+            }
+        },
 
     },
 
@@ -94,12 +94,12 @@ export default {
 </script>
 
 <template>
-    
-    <div id="dateSelector">
+    <!-- Date Selector code -->
+    <!-- <div id="dateSelector">
         <button @click="desiredDateHandler(-1)">Previous day</button>
         <div>{{ desiredDate }}</div>
         <button @click="desiredDateHandler(1)">Next day</button>
-    </div>
+    </div> -->
 
     <!-- Checks if restaurant data has been fetched before looping -->
     <div id="flexBox" v-if="isDataFetched">
@@ -113,9 +113,7 @@ export default {
             Unicafe has different rules so it has its own loop
             -->
             <div v-if="restaurant.name === 'Unicafe'" class="foodContainer">
-                <ul class="lunchType"
-                    v-for="lunch in getLunchData(restaurant)"
-                    :key="lunch">
+                <ul class="lunchType" v-for="lunch in getLunchData(restaurant)" :key="lunch">
                     <!-- {{ lunch.price.name }} -->
                     <li v-if="lunch" class="menuItem" v-text="lunch.name"></li>
                 </ul>
@@ -124,9 +122,10 @@ export default {
             <div v-else class="foodContainer">
                 <ul class="lunchType" v-for="lunchtype in getLunchData(restaurant)" :key="lunchtype">
                     <!-- {{ lunchtype.Name }} -->
-                    <li v-if="lunchtype" class="menuItem" v-for="option in lunchtype.Components" :key="option" v-text="option"></li>
+                    <li v-if="lunchtype" class="menuItem" v-for="option in lunchtype.Components" :key="option"
+                        v-text="option"></li>
                 </ul>
-            </div> 
+            </div>
         </div>
 
     </div>
@@ -179,7 +178,7 @@ export default {
     align-items: center;
     height: 10vh;
     background-color: white;
-    margin:5%;
+    margin: 5%;
 }
 
 
@@ -214,5 +213,33 @@ export default {
 
 .lunchType:last-child {
     border-bottom: none;
+}
+
+/* CSS Desktop */
+@media screen and (min-width: 768px) {
+    .menu {
+        width: 500px;
+        -ms-overflow-style: none;
+        /* IE and Edge */
+        scrollbar-width: none;
+        /* Firefox */
+    }
+
+    /* Hide scrollbar for Chrome, Safari and Opera */
+    #events::-webkit-scrollbar {
+        display: none;
+    }
+
+    #flexBox {
+        position: absolute;
+        top: 50%;
+        left: 50%;
+        transform: translate(-50%, -50%);
+        display: flex;
+        flex-direction: column;
+        justify-content: center;
+        align-items: center;
+        width: fit-content;
+    }
 }
 </style>
