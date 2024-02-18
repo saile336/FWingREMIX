@@ -332,13 +332,6 @@ Overview
 
 Classes.vue is a Vue.js component aimed at dynamically displaying a schedule of classes or events. It is particularly tailored for educational platforms or applications where users need to view a list of their enrolled classes, upcoming events, or similar scheduled activities. The component fetches data asynchronously and renders a user-friendly view of the schedule.
 
-### Data
-
-Based on the provided code snippet, the component's data structure includes:
-
-    classes: An array to store the fetched schedule information. Each item in the array represents a class or event with details necessary for display.
-    isLoading: A boolean indicating the loading state of the schedule data to manage UI feedback during data fetching.
-    error: A string or object to capture and display any errors encountered during the fetching process.
 
 ### Methods
 
@@ -521,4 +514,3 @@ Server Initialization
     Starts the Express server, listening on the specified port (3000).
     Logs a message indicating that the server is running and listening for incoming requests.
 
-    
