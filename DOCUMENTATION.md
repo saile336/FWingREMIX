@@ -101,20 +101,6 @@ Weather.vue is a Vue.js component designed to fetch and display weather informat
 
     formatWeatherData(response): A utility method to process and format the raw response from the weather API into a more usable structure for the component. This could involve mapping response data to weatherData properties, converting temperature units, or parsing forecast data.
 
-## Example Usage
-
-```html
-
-<template>
-  <div>
-    <Weather location="Helsinki" units="metric" />
-  </div>
-</template>
-```
-In this example, the Weather component is used with the location and units props to fetch and display weather data for Helsinki in metric units.
-Styling
-
-The component is expected to include scoped CSS for styling the presentation of the weather data. This might involve styles for temperature display, condition icons, forecast layouts, and responsive design considerations to ensure readability across devices.
 
 # Documentation for TheClock.vue
 
@@ -225,7 +211,7 @@ Classes.vue is a Vue.js component aimed at dynamically displaying a schedule of 
 ```
 This example demonstrates how to conditionally render the Classes.vue component, showing loading feedback and handling errors. It assumes the existence of a currentUser object with an id property.
 
-# Documentation for User Settings Component in Vue.js
+# Documentation for Settings.vue
 
 This document provides comprehensive details on the AddScheduleButton Vue.js component, designed for managing user preferences including schedule links, dietary restrictions, widgets, and associations within a web application.
 
@@ -234,12 +220,9 @@ This document provides comprehensive details on the AddScheduleButton Vue.js com
     Add Schedule Links: Users can add a link to their personal or professional schedules.
     Dietary Preferences: Users can select their dietary restrictions from a predefined list.
     Widget Selection: Users can choose up to two widgets to be displayed on their dashboard.
-    Association Membership: Users can select their affiliation with groups or organizations from a list.
+    Association Membership: Users can select their affiliation with groups or organizations from a list inorder to dispaly the correct color and logo.
+    It works by saving the information to localStorage and then uploading it to the server, it's done this way becuse we neither got sensitive data to hide nor was the project started with a server.
 
-## Component Structure
-## Template
-
-The template consists of multiple button-triggered actions for showing input fields and menus for schedules, diets, widgets, and associations. Each section has its UI elements that are conditionally rendered based on user interactions.
 
 ## Script
 
@@ -263,12 +246,6 @@ Lifecycle Hooks
 
     mounted(): On component mount, loads saved settings from localStorage and updates component state accordingly.
 
-Style
-
-Scoped CSS provides styles for the component, ensuring a responsive and user-friendly interface. It includes styles for buttons, input fields, and option menus, with active state styles for selections.
-Usage
-
-To use this component, include it within a parent component or Vue application. Ensure the backend endpoint for updating user settings (http://localhost:3000/api/updateUserSettings) is correctly configured to handle PUT requests as per the component's updateUserSettings method.
 
 ```html
 <template>
@@ -293,8 +270,6 @@ export default {
 The component makes a PUT request to update user settings. Ensure your backend is configured to receive JSON payloads and update user settings accordingly. The request includes user_id, widgets, diets, and associations as part of the request body.
 Security Considerations
 
-    Validate all inputs on the backend to prevent SQL injection and other common web vulnerabilities.
-    Do not store sensitive information in localStorage as it's accessible through client-side scripts.
 
 # Documentation for server.js
 
