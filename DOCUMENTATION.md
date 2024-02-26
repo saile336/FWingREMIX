@@ -72,6 +72,69 @@ npm install
 
 This documentation provides a foundation for understanding and working with the Vue.js frontend part of the application. Further details should be added as the application evolves and new features are implemented.
 
+# Documentation for App.vue
+This documentation provides an overview of a Vue component designed for a web application. The component integrates various features such as user authentication, dynamic UI updates based on user settings, and interaction with a backend API for data retrieval and storage.
+
+## Features
+
+- **User Authentication**: Supports user login and registration workflows.
+- **Dynamic UI Customization**: Allows users to customize the UI, including association logos and background colors.
+- **Data Fetching and Storage**: Interacts with a backend API to check username availability, login users, register new users, and fetch user-specific settings.
+
+## Components
+
+The main Vue component integrates several child components, each responsible for a specific part of the UI:
+
+- `TheClock`: Displays the current time.
+- `FetchKide`: Fetches and displays data from an external source.
+- `Navbar`: Provides navigation between different pages of the application.
+- `FetchMenu`: Fetches and displays menu items from an external source.
+- `Classes`: Displays class schedules
+- `Settings`: Allows users to customize their application settings.
+- `Widgets`: Displays user-specific widgets on the homepage.
+
+## Data Properties
+
+- `kideOrg`: Organization key for `FetchKide` component.
+- `currentPage`: Tracks the currently active page.
+- `logoSrc`: Stores the path to the currently selected logo image.
+- `enteredUsername`: Temporary storage for username input during login/registration.
+- `usernameCheckInProgress`: Indicates whether a username check is currently being performed.
+- `usernameExists`: Indicates whether the entered username exists in the database.
+- `isLoggedIn`: Tracks whether the user is currently logged in.
+
+## Methods
+
+### Authentication
+
+- `checkLogin()`: Checks if the user is already logged in.
+- `promptLogin()`: Prompts the user to enter their username for login.
+- `loginUser()`: Attempts to log in the user with the entered username.
+- `registerUser()`: Registers a new user with the entered username.
+
+### User Settings and UI Customization
+
+- `fetchUserSettings(user_id)`: Fetches and applies user-specific settings.
+- `updatePage(page)`: Updates the current page view.
+- `updateAssociation(associationKey)`: Updates the UI based on the selected association.
+- `loadAssociationLogoAndColor()`: Loads and applies the association-specific logo and color scheme from local storage.
+
+### Utility
+
+- `isMobile()`: Checks if the application is being accessed from a mobile device.
+
+## Lifecycle Hooks
+
+- `mounted()`: Performs initial setup tasks such as loading the association logo and checking login status.
+
+## Watchers
+
+Watchers are used to reactively update the UI based on changes to certain data properties:
+
+- `associationColor`: Updates the background color when the association color changes.
+- `secondColor`: Updates the navigation color when the secondary color changes.
+
+
 # Documentation for FetchMenu.vue
 
 The FetchMenu.vue component is designed for fetching and displaying restaurant menus. It interacts with the backend, which in turn fetches from the restaurants own APIs to retrieve daily or weekly menus and presents them in a user-friendly format within a Vue.js application. This documentation outlines its core functionalities based on the provided code snippets.
