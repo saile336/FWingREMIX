@@ -337,79 +337,71 @@ Security Considerations
 # Documentation for server.js
 
 server.js is the main server file for the application, responsible for handling HTTP requests, managing database connections, and orchestrating data fetching operations.
-## Dependencies
+## Setup and Configuration
 
-    dotenv: Used to load environment variables from a .env file.
-    express: A web application framework for Node.js, utilized for building the server.
-    body-parser: Middleware to parse incoming request bodies in a middleware before handlers, allowing easier access to request data.
-    cors: Middleware to enable Cross-Origin Resource Sharing (CORS), allowing restricted resources on a web page to be requested from another domain.
+### Dependencies
 
-## Initialization
+- `dotenv`: Loads environment variables from a `.env` file.
+- `express`: Web application framework for Node.js.
+- `body-parser`: Middleware to parse incoming request bodies.
+- `cors`: Middleware to enable Cross-Origin Resource Sharing.
+- `pg`: PostgreSQL client for Node.js.
 
-    Loads environment variables from a .env file using dotenv.
-    Initializes an Express application.
-    Defines the port number (3000) for the server to listen on.
-    Configures CORS middleware to allow requests from the specified Vue application URL (http://localhost:5173) and enables credentials.
+### Environment Configuration
 
-## Routes
+Environment variables are configured through a `.env` file located in the parent directory. These variables include database connection parameters and potentially other sensitive configurations.
 
-    Test Route (/api/test):
-        Responds with a JSON object containing a test message ("Hello from the server!") to verify server connectivity.
+## Middleware
 
-    Database Connection:
-        Establishes a connection to a PostgreSQL database using the pg module.
-        Tests the database connection by executing a query to retrieve the current timestamp.
+- **CORS**: Configured to allow requests from the development server running the Vue application. This setup might require adjustment when deploying the server to handle different origins.
+- **Body Parser**: Parses JSON request bodies, enabling the server to easily retrieve request data.
 
-    Update Data Route (PUT /api/update):
-        Allows updating data in the database by sending a PUT request with parameters id and newField.
-        Executes a SQL UPDATE query on the database table myTable based on the provided parameters.
+## Database Connection
 
-    Get Data Route (GET /api/get):
-        Retrieves data from the database by sending a GET request.
-        Executes a SQL SELECT query to fetch all records from the myTable table.
+Utilizes the `pg` module to connect to a PostgreSQL database using environment variables for connection details. Includes a test query to verify the connection upon server start.
 
-    Create Table Query:
-        Defines a SQL query to create a table named user_settings if it doesn't already exist.
-        Executes the create table query to ensure the table's existence in the database.
+## API Endpoints
 
-    Get User Settings Route (GET /api/getUserSettings/:user_id):
-        Retrieves user settings from the database based on the provided user_id.
-        Executes a SQL SELECT query to fetch user settings from the user_settings table.
+### Test Endpoint
 
-    Check Username Route (GET /api/checkUsername/:username):
-        Checks if a username exists in the database.
-        Sanitizes the provided username to ensure it meets certain format requirements.
-        Executes a SQL SELECT query to check for the existence of the username.
+- `GET /api/test`: Returns a simple message indicating that the server is operational.
 
-    User Login Route (POST /api/login):
-        Handles user login by checking if the provided username exists in the database.
-        Executes a SQL SELECT query to find a matching username.
+### User Settings
 
-    Add User Route (POST /api/addUser):
-        Adds a new user to the database.
-        Executes a SQL INSERT query to insert a new user record into the user_settings table.
+- `GET /api/getUserSettings/:user_id`: Retrieves user settings based on the provided user ID.
+- `POST /api/addUser`: Adds a new user with the specified username.
+- `POST /api/login`: Authenticates a user based on the provided username.
+- `PUT /api/updateUserSettings`: Updates user settings for widgets, diets, and associations based on the provided user ID.
 
-    Update User Settings Route (PUT /api/updateUserSettings):
-        Updates user settings in the database.
-        Executes a SQL UPDATE query to modify user settings based on the provided parameters (user_id, widgets, diets, associations).
+### Username Checks
 
-    Fetch Kide Data:
-        Defines an object orgs containing URLs for fetching data from different organizations via the Kide API.
-        Implements a function fetchKide() to fetch data from Kide for each organization asynchronously.
-        Runs fetchKide() on startup and refreshes data every hour using setInterval.
+- `GET /api/checkUsername/:username`: Checks if the provided username exists in the database.
 
-    Kide Routes:
-        Provides routes to fetch all Kide data and specific Kide data by organization name.
+### Data Manipulation Templates
 
-    Restaurant Data Fetching:
-        Defines an object restaurants containing URLs for fetching restaurant menus.
-        Implements a function fetchRestaurants() to fetch menu data for each restaurant asynchronously.
+- `PUT /api/update`: Template endpoint for updating database records.
+- `GET /api/get`: Template endpoint for fetching data from the database.
 
-    Menu Routes:
-        Provides routes to fetch all restaurant menu data and specific menu data by restaurant name.
+### Kide Data Fetching
 
-Server Initialization
+- `GET /api/getKide`: Fetches data for all organizations from Kide API.
+- `GET /api/getKide/:name`: Fetches data for a specific organization from Kide API.
 
-    Starts the Express server, listening on the specified port (3000).
-    Logs a message indicating that the server is running and listening for incoming requests.
+### Restaurant Menu Fetching
 
+- `GET /api/getMenu`: Fetches menus for all configured restaurants.
+- `GET /api/getMenu/:restaurant`: Fetches the menu for a specific restaurant.
+
+## Utility Functions
+
+### fetchKide
+
+Periodically fetches data from the Kide API for predefined organizations and updates the server's local cache of this data.
+
+### fetchRestaurants
+
+Fetches daily menus from predefined restaurant APIs and stores them in the server's local cache.
+
+## Running the Server
+
+The server is configured to listen on port 3000, with console output confirming the server's operational status and successful database connection.
