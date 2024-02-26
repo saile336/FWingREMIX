@@ -246,33 +246,59 @@ This usage example demonstrates how to embed the FetchKide component into a pare
 
 # Documentation for Classes.vue 
 
-The Classes.vue component, in the context of fetching and displaying a user's schedule, is designed to interface with an external source, typically a backend server, to retrieve and present schedules. This documentation details its structure, functionality, props, methods, and how it interacts within a Vue.js application for the specific purpose of schedule management.
-Overview
+The Classes.vue component, in the context of fetching and displaying a user's schedule, is designed to interface with an external source, to retrieve and present schedules. This documentation details its structure, functionality, props, methods, and how it interacts within a Vue.js application for the specific purpose of schedule management.
 
-Classes.vue is a Vue.js component aimed at dynamically displaying a schedule of classes or events. It is particularly tailored for educational platforms or applications where users need to view a list of their enrolled classes, upcoming events, or similar scheduled activities. The component fetches data asynchronously and renders a user-friendly view of the schedule.
+## Overview
 
+
+
+
+### Features
+
+- **iCal Parsing**: Utilizes the `ical` library to parse .ics files and extract event data.
+- **Dynamic Event Display**: Shows events for the current day, including course name, start time, end time, and location.
+- **Local Storage Integration**: Retrieves the iCal feed link from local storage for use in fetching the .ics file.
+
+### Data Properties
+
+- `link`: The URL of the .ics file to parse, initially set to an empty string.
+- `courses`: An array to store the events for the current day after parsing.
 
 ### Methods
-
     fetchClasses(): This method is responsible for asynchronously fetching the schedule data from an external API. Upon invocation, it sets isLoading to true, makes a request to the designated endpoint (using Axios or a similar HTTP client), processes the response to update the classes data property, and handles any errors encountered by updating the error property. It finally sets isLoading to false.
 
     parseIcal(): Given the mention of iCal format in the context, this method likely parses iCal data received from the backend into a more usable format for the component. This might involve converting the iCal data into an array of class/event objects with fields like startDate, endDate, summary, and location.
 
     formatTime() and formatEndTime(): These helper methods format date and time strings for display within the component, ensuring consistency and readability of schedule timings.
+### parseIcal
 
-## Example Usage
+Asynchronously fetches and parses the .ics file specified by the `link` property. It filters the events to find those occurring on the current day and stores relevant details in the `courses` array.
 
-```html
+- Checks local storage for a stored iCal link.
+- Fetches the .ics file and parses it using the `ical` library.
+- Filters events for the current day and with a specified location.
+- Stores event details in the `courses` array.
 
-<template>
-  <div class="schedule">
-    <Classes v-if="!isLoading && classes.length" :userId="currentUser.id" />
-    <p v-if="isLoading">Loading your schedule...</p>
-    <p v-if="error">An error occurred: {{ error }}</p>
-  </div>
-</template>
-```
-This example demonstrates how to conditionally render the Classes.vue component, showing loading feedback and handling errors. It assumes the existence of a currentUser object with an id property.
+### formatTime
+
+Formats the start time of an event to a more readable format (`HH:MM`).
+
+- `startDate`: The start date and time of an event.
+
+### formatEndTime
+
+Formats the end time of an event to a more readable format (`HH:MM`), adjusting for differences in time representation.
+
+- `endTime`: The end time of an event in `HH.MM` format.
+
+
+### mounted
+
+Calls the `parseIcal` method to fetch and parse the .ics file upon component mounting. Includes error handling for potential failures in parsing.
+
+## Template
+
+The template section includes dynamic rendering of today's events, displaying the course name, start and end times, and location for each. It uses the `v-for` directive to iterate over the `courses` array and display each event's details.
 
 # Documentation for Settings.vue
 
