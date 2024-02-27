@@ -1,42 +1,38 @@
 <template>
-    <!-- Main container for schedule buttons and associated options -->
     <div class="schedule-button-container">
-        <!-- Button to toggle input field for adding schedule links -->
         <button class="action-button" @click="toggleInputField">Add to Schedule</button>
-        <!-- Input field for adding schedule links, visible when inputVisible is true -->
-        <input v-if="inputVisible" type="text" v-model="link" class="link-input" placeholder="Enter link here" @keyup.enter="saveLink" />
+        <input v-if="inputVisible" type="text" v-model="link" class="link-input"
+            placeholder="Enter link here and press Enter" @keyup.enter="saveLink" />
 
-        <!-- Button to toggle diet options menu -->
         <button class="action-button" @click="toggleDietOptions">Diet</button>
-        <!-- Diet options, displayed when showDietOptions is true -->
         <div v-if="showDietOptions" class="dietOptions">
-            <!-- Buttons for each diet option, toggles selection state on click -->
             <button v-for="(selected, diet) in diets" :key="diet" :class="{ active: selected }" @click="selectDiet(diet)">
                 {{ diet }}
             </button>
         </div>
 
-        <!-- Button to toggle widget options menu -->
         <button class="action-button" @click="toggleWidgetOptions">Widgets</button>
-        <!-- Disclaimer for widget selection, visible when showWidgetOptions is true -->
         <p v-if="showWidgetOptions" class="disclaimer">Choose up to 2 widgets:</p>
-        <!-- Widget options, displayed when showWidgetOptions is true -->
         <div v-if="showWidgetOptions" class="widgetOptions">
-            <!-- Buttons for each widget option, toggles selection state on click -->
-            <button v-for="(selected, widget) in widgets" :key="widget" :class="{ active: selected }" @click="selectWidget(widget)">
+            <button v-for="(selected, widget) in widgets" :key="widget" :class="{ active: selected }"
+                @click="selectWidget(widget)">
                 {{ widget }}
             </button>
         </div>
 
-        <!-- Button to toggle association options menu -->
         <button class="action-button" @click="toggleAssociationOptions">Associations</button>
-        <!-- Association options, displayed when showAssociationOptions is true -->
         <div v-if="showAssociationOptions" class="associationOptions">
-            <!-- Buttons for each association option, toggles selection state on click -->
-            <button v-for="(selected, association) in associations" :key="association" :class="{ active: selected }" @click="selectAssociation(association)">
+            <button v-for="(selected, association) in associations" :key="association" :class="{ active: selected }"
+                @click="selectAssociation(association)">
                 {{ association }}
             </button>
         </div>
+
+        <!-- New button and input field for Weather API Key -->
+        <button class="action-button" @click="toggleWeatherApiKeyField">Add Weather API Key</button>
+        <input v-if="weatherApiKeyVisible" type="text" v-model="weatherApiKey" class="link-input"
+            placeholder="Enter Weather API Key here and press Enter" @keyup.enter="saveWeatherApiKey" />
+
         <button class="action-button" @click="updateUserSettings">Update User Settings</button>
     </div>
 </template>
@@ -45,43 +41,38 @@
 export default {
     name: 'AddScheduleButton',
     data() {
-        // Component state variables
         return {
-            inputVisible: false,  // Controls visibility of the link input field
-            link: '',             // Stores the schedule link input by the user
-            showDietOptions: false,  // Controls visibility of diet options menu
-            diets: { Milk: false, Laktos: false, Vege: false, Gluten: false },  // Diet options state
-            showWidgetOptions: false,  // Controls visibility of widget options menu
-            widgets: { Schedule: false, Menu: false, Events: false, Weather: false },  // Widget options state
-            showAssociationOptions: false,  // Controls visibility of association options menu
-            associations: { TLK: false, HanSe: false, Hosk: false, Kult: false, Commedia: false },  // Association options state
+            inputVisible: false,
+            link: '',
+            showDietOptions: false,
+            diets: { Milk: false, Laktos: false, Vege: false, Gluten: false },
+            showWidgetOptions: false,
+            widgets: { Schedule: false, Menu: false, Events: false, Weather: false },
+            showAssociationOptions: false,
+            associations: { TLK: false, HanSe: false, Hosk: false, Kult: false, Commedia: false },
+            weatherApiKeyVisible: false, // New state for Weather API Key input visibility
+            weatherApiKey: '', // New state for storing the Weather API Key
         };
     },
     methods: {
-        // Toggles visibility of the link input field
         toggleInputField() {
             this.inputVisible = !this.inputVisible;
         },
-        // Saves the entered link to local storage and hides the input field
         saveLink() {
             localStorage.setItem('scheduleLink', this.link);
             this.inputVisible = false;
             this.link = '';
         },
-        // Toggles visibility of diet options menu
         toggleDietOptions() {
             this.showDietOptions = !this.showDietOptions;
         },
-        // Toggles selection state of a diet option and updates local storage
         selectDiet(diet) {
             this.diets[diet] = !this.diets[diet];
             localStorage.setItem('Diets', JSON.stringify(this.diets));
         },
-        // Toggles visibility of widget options menu
         toggleWidgetOptions() {
             this.showWidgetOptions = !this.showWidgetOptions;
         },
-        // Toggles selection state of a widget and limits selection to 2 widgets
         selectWidget(widget) {
             const selectedWidgets = this.countSelectedWidgets();
             if (!this.widgets[widget] && selectedWidgets >= 2) {
@@ -90,15 +81,12 @@ export default {
             this.widgets[widget] = !this.widgets[widget];
             localStorage.setItem('Widgets', JSON.stringify(this.widgets));
         },
-        // Counts the number of selected widgets
         countSelectedWidgets() {
             return Object.values(this.widgets).filter(val => val).length;
         },
-        // Toggles visibility of association options menu
         toggleAssociationOptions() {
             this.showAssociationOptions = !this.showAssociationOptions;
         },
-        // Selects an association and updates local storage, allowing only one selection
         selectAssociation(association) {
             Object.keys(this.associations).forEach((key) => {
                 this.associations[key] = false;
@@ -107,35 +95,48 @@ export default {
             localStorage.setItem('Associations', JSON.stringify(this.associations));
             this.$emit('associationSelected', association);
         },
-     async updateUserSettings() {
-      const user_id = localStorage.getItem('userId'); 
-      const widgets = localStorage.getItem('Widgets'); 
-      const diets = localStorage.getItem('Diets');
-      const associations = localStorage.getItem('Associations');
+        // New method for toggling Weather API Key input field visibility
+        toggleWeatherApiKeyField() {
+            this.weatherApiKeyVisible = !this.weatherApiKeyVisible;
+        },
+        // New method for saving the Weather API Key to local storage
+        saveWeatherApiKey() {
+            localStorage.setItem('weatherApiKey', this.weatherApiKey);
+            this.weatherApiKeyVisible = false;
+            this.weatherApiKey = '';
+            this.updateUserSettings();
+        },
+        async updateUserSettings() {
+            const user_id = localStorage.getItem('userId');
+            const widgets = localStorage.getItem('Widgets');
+            const diets = localStorage.getItem('Diets');
+            const associations = localStorage.getItem('Associations');
+            const weatherApiKey = localStorage.getItem('weatherApiKey');
 
-      try {
-        const response = await fetch('http://localhost:3000/api/updateUserSettings', {
-            method: 'PUT',
-            headers: {
-                'Content-Type': 'application/json',
-            },
-            body: JSON.stringify({ user_id, widgets, diets, associations }),
-        });
+            try {
+                const response = await fetch('http://localhost:3000/api/updateUserSettings', {
+                    method: 'PUT',
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                    body: JSON.stringify({ user_id, widgets, diets, associations, weatherApiKey }),
+                });
 
-        const result = await response.json();
+                const result = await response.json();
 
-        if (result.rowsAffected > 0) {
-            console.log('User settings update successful');
-        } else {
-            console.error('User settings update failed');
-        }
-    } catch (error) {
-        console.error('Error updating user settings', error);
-    }
-    },
+                if (result.rowsAffected > 0) {
+                    console.log('User settings update successful');
+                    // Save the updated weatherApiKey to local storage
+                    localStorage.setItem('weatherApiKey', weatherApiKey);
+                } else {
+                    console.error('User settings update failed');
+                }
+            } catch (error) {
+                console.error('Error updating user settings', error);
+            }
+        },
     },
     mounted() {
-        // Load saved settings from local storage on component mount
         const savedDiets = localStorage.getItem('Diets');
         if (savedDiets) {
             this.diets = JSON.parse(savedDiets);
@@ -148,8 +149,13 @@ export default {
         if (savedAssociations) {
             this.associations = JSON.parse(savedAssociations);
         }
+        // Load saved Weather API Key from local storage on component mount
+        const savedWeatherApiKey = localStorage.getItem('weatherApiKey');
+        if (savedWeatherApiKey) {
+            this.weatherApiKey = savedWeatherApiKey;
+        }
     }
-}
+};
 </script>
   
 <style scoped>
@@ -270,6 +276,5 @@ export default {
     flex-wrap: wrap;
     justify-content: center;
     gap: 10px;
-}
-</style>
+}</style>
   

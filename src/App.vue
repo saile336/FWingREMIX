@@ -123,6 +123,11 @@ export default {
             // Update localStorage
             localStorage.setItem('userSettings', JSON.stringify(userSettings));
 
+            // Store weatherApiKey in local storage if it exists
+            if (userSettings.weatherapikey) { // Corrected key name
+                localStorage.setItem('weatherApiKey', userSettings.weatherapikey); // Corrected key name
+            }
+
             // Update state for widgets, diets, and associations
             if (userSettings.widgets) {
                 localStorage.setItem('Widgets', JSON.stringify(userSettings.widgets));
