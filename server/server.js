@@ -70,7 +70,8 @@ CREATE TABLE IF NOT EXISTS user_settings (
     diets JSONB,
     widgets JSONB,
     associations JSONB
-    key VARCHAR(255)
+    weatherApiKey VARCHAR(255)
+    schedule VARCHAR(255)
 );
 `;
 
@@ -156,10 +157,10 @@ app.post('/api/addUser', async (req, res) => {
 });
 
 app.put('/api/updateUserSettings', async (req, res) => {
-    const { user_id, widgets, diets, associations, weatherApiKey } = req.body;
+    const { user_id, widgets, diets, associations, weatherApiKey, scheduleLink } = req.body;
 
     try {
-        const result = await pool.query('UPDATE user_settings SET widgets = $1, diets = $2, associations = $3, weatherApiKey = $4 WHERE user_id = $5', [widgets, diets, associations, weatherApiKey, user_id]);
+        const result = await pool.query('UPDATE user_settings SET widgets = $1, diets = $2, associations = $3, weatherApiKey = $4, schedule = $5 WHERE user_id = $6', [widgets, diets, associations, weatherApiKey, scheduleLink, user_id]);
 
         res.json({ message: 'User settings update successful', rowsAffected: result.rowCount });
     } catch (err) {

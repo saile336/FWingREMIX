@@ -1,8 +1,8 @@
 <template>
     <div class="schedule-button-container">
         <button class="action-button" @click="toggleInputField">Add to Schedule</button>
-        <input v-if="inputVisible" type="text" v-model="link" class="link-input"
-            placeholder="Enter link here and press Enter" @keyup.enter="saveLink" />
+        <input v-if="inputVisible" type="text" v-model="scheduleLink" class="link-input"
+            placeholder="Enter link here and press Enter" @keyup.enter="savescheduleLink" />
 
         <button class="action-button" @click="toggleDietOptions">Diet</button>
         <div v-if="showDietOptions" class="dietOptions">
@@ -43,7 +43,7 @@ export default {
     data() {
         return {
             inputVisible: false,
-            link: '',
+            scheduleLink: '',
             showDietOptions: false,
             diets: { Milk: false, Laktos: false, Vege: false, Gluten: false },
             showWidgetOptions: false,
@@ -58,11 +58,12 @@ export default {
         toggleInputField() {
             this.inputVisible = !this.inputVisible;
         },
-        saveLink() {
-            localStorage.setItem('scheduleLink', this.link);
-            this.inputVisible = false;
-            this.link = '';
-        },
+        savescheduleLink() {
+        localStorage.setItem('scheduleLink', this.scheduleLink); // Save scheduleLink to local storage
+        this.inputVisible = false;
+        this.scheduleLink = ''; // Clear the input field after saving
+        this.updateUserSettings(); // Call the updateUserSettings method to save the scheduleLink to the database
+    },
         toggleDietOptions() {
             this.showDietOptions = !this.showDietOptions;
         },
@@ -107,34 +108,33 @@ export default {
             this.updateUserSettings();
         },
         async updateUserSettings() {
-            const user_id = localStorage.getItem('userId');
-            const widgets = localStorage.getItem('Widgets');
-            const diets = localStorage.getItem('Diets');
-            const associations = localStorage.getItem('Associations');
-            const weatherApiKey = localStorage.getItem('weatherApiKey');
+        const user_id = localStorage.getItem('userId');
+        const widgets = localStorage.getItem('Widgets');
+        const diets = localStorage.getItem('Diets');
+        const associations = localStorage.getItem('Associations');
+        const weatherApiKey = localStorage.getItem('weatherApiKey');
+        const scheduleLink = localStorage.getItem('scheduleLink'); 
 
-            try {
-                const response = await fetch('http://localhost:3000/api/updateUserSettings', {
-                    method: 'PUT',
-                    headers: {
-                        'Content-Type': 'application/json',
-                    },
-                    body: JSON.stringify({ user_id, widgets, diets, associations, weatherApiKey }),
-                });
+        try {
+            const response = await fetch('http://localhost:3000/api/updateUserSettings', {
+                method: 'PUT',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify({ user_id, widgets, diets, associations, weatherApiKey, scheduleLink }), // Include scheduleLink in the request body
+            });
 
-                const result = await response.json();
+            const result = await response.json();
 
-                if (result.rowsAffected > 0) {
-                    console.log('User settings update successful');
-                    // Save the updated weatherApiKey to local storage
-                    localStorage.setItem('weatherApiKey', weatherApiKey);
-                } else {
-                    console.error('User settings update failed');
-                }
-            } catch (error) {
-                console.error('Error updating user settings', error);
+            if (result.rowsAffected > 0) {
+                console.log('User settings update successful');
+            } else {
+                console.error('User settings update failed');
             }
-        },
+        } catch (error) {
+            console.error('Error updating user settings', error);
+        }
+    },
     },
     mounted() {
         const savedDiets = localStorage.getItem('Diets');
@@ -153,6 +153,10 @@ export default {
         const savedWeatherApiKey = localStorage.getItem('weatherApiKey');
         if (savedWeatherApiKey) {
             this.weatherApiKey = savedWeatherApiKey;
+        }
+        const savedscheduleLink = localStorage.getItem('scheduleLink');
+        if (savedscheduleLink) {
+            this.scheduleLink = savedscheduleLink;
         }
     }
 };
