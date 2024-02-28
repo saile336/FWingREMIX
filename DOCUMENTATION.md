@@ -265,11 +265,11 @@ The Classes.vue component, in the context of fetching and displaying a user's sc
 - `courses`: An array to store the events for the current day after parsing.
 
 ### Methods
-    fetchClasses(): This method is responsible for asynchronously fetching the schedule data from an external API. Upon invocation, it sets isLoading to true, makes a request to the designated endpoint (using Axios or a similar HTTP client), processes the response to update the classes data property, and handles any errors encountered by updating the error property. It finally sets isLoading to false.
+    `fetchClasses():` This method is responsible for asynchronously fetching the schedule data from an external API. Upon invocation, it sets isLoading to true, makes a request to the designated endpoint (using Axios or a similar HTTP client), processes the response to update the classes data property, and handles any errors encountered by updating the error property. It finally sets isLoading to false.
 
-    parseIcal(): Given the mention of iCal format in the context, this method likely parses iCal data received from the backend into a more usable format for the component. This might involve converting the iCal data into an array of class/event objects with fields like startDate, endDate, summary, and location.
+    `parseIcal():` Given the mention of iCal format in the context, this method likely parses iCal data received from the backend into a more usable format for the component. This might involve converting the iCal data into an array of class/event objects with fields like startDate, endDate, summary, and location.
 
-    formatTime() and formatEndTime(): These helper methods format date and time strings for display within the component, ensuring consistency and readability of schedule timings.
+    `formatTime()` and formatEndTime(): These helper methods format date and time strings for display within the component, ensuring consistency and readability of schedule timings.
 ### parseIcal
 
 Asynchronously fetches and parses the .ics file specified by the `link` property. It filters the events to find those occurring on the current day and stores relevant details in the `courses` array.
@@ -306,10 +306,10 @@ This document provides comprehensive details on the AddScheduleButton Vue.js com
 
 ## Features
 
-    Add Schedule Links: Users can add a link to their personal or professional schedules.
-    Dietary Preferences: Users can select their dietary restrictions from a predefined list.
-    Widget Selection: Users can choose up to two widgets to be displayed on their dashboard.
-    Association Membership: Users can select their affiliation with groups or organizations from a list inorder to dispaly the correct color and logo.
+    `AddScheduleLinks:` Users can add a link to their personal or professional schedules.
+    `DietaryPreferences:` Users can select their dietary restrictions from a predefined list.
+    `WidgetSelection:` Users can choose up to two widgets to be displayed on their dashboard.
+    `Association:` Users can select their affiliation with groups or organizations from a list inorder to dispaly the correct color and logo.
     It works by saving the information to localStorage and then uploading it to the server, it's done this way becuse we neither got sensitive data to hide nor was the project started with a server.
 
 
@@ -317,23 +317,23 @@ This document provides comprehensive details on the AddScheduleButton Vue.js com
 
 Data Properties
 
-    inputVisible: Controls the visibility of the schedule link input field.
-    link: Temporarily stores the user's schedule link.
-    showDietOptions, showWidgetOptions, showAssociationOptions: Control the visibility of their respective menus.
-    diets, widgets, associations: Objects that store the user's selections for each category.
+    `inputVisible: Controls the visibility of the schedule link input field.`
+    `link: Temporarily stores the user's schedule link.`
+    `showDietOptions, showWidgetOptions, showAssociationOptions: Control the visibility of their respective menus.`
+    `diets, widgets, associations: Objects that store the user's selections for each category.`
 
 Methods
 
-    toggleInputField(): Toggles the visibility of the schedule link input field.
-    saveLink(): Saves the schedule link to localStorage and resets the input field.
-    toggleDietOptions(), toggleWidgetOptions(), toggleAssociationOptions(): Toggle the visibility of their respective option menus.
-    selectDiet(diet), selectWidget(widget), selectAssociation(association): Handle selection logic for diets, widgets, and associations, including saving these preferences to localStorage.
-    countSelectedWidgets(): Counts the number of widgets selected by the user.
-    updateUserSettings(): Updates user settings on the backend via an API call.
+    `toggleInputField():` Toggles the visibility of the schedule link input field.
+    `saveLink():` Saves the schedule link to localStorage and resets the input field.`
+    `toggleDietOptions(),` toggleWidgetOptions(), toggleAssociationOptions(): Toggle the visibility of their respective option menus.
+    `selectDiet(diet),` selectWidget(widget), selectAssociation(association): Handle selection logic for diets, widgets, and associations,` including saving these preferences to localStorage.
+    `countSelectedWidgets():` Counts the number of widgets selected by the user.
+    `updateUserSettings():` Updates user settings on the backend via an API call.
 
 Lifecycle Hooks
 
-    mounted(): On component mount, loads saved settings from localStorage and updates component state accordingly.
+    `mounted(): On component mount, loads saved settings from localStorage and updates component state accordingly.`
 
 
 ```html
