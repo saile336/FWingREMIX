@@ -103,7 +103,7 @@ export default {
 
 <template>
     <div class="classes">
-        <p id="today">Today's courses</p>
+        <p id="today">TODAY</p>
         <div class="classText" v-for="(course, index) in courses" :key="index">
             <p class="course">{{ parseSummary(course.course) }}</p>
 
@@ -120,7 +120,7 @@ export default {
             </div>
         </div>
 
-        <p id="today">Tomorrow's courses</p>
+        <p id="today">TOMORROW</p>
         <div class="classText" v-for="(course, index) in coursesTomorrow" :key="index">
             <p class="course">{{ parseSummary(course.course) }}</p>
 
