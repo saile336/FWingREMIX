@@ -172,9 +172,9 @@ export default {
 
 .classText {
     background-color: #f0f0f0;
-    height:auto;
+    height: auto;
     margin: 0 10vw 10vw 10vw;
-    border-radius: 5px;   
+    border-radius: 5px;
 }
 
 .course {
@@ -196,16 +196,46 @@ export default {
 }
 
 .timeBox,
-.roomBox {
-    
-}
+.roomBox {}
 
 .time,
 .room {
     font-size: 1em;
 }
 
-.room{
+.room {
     color: rgb(189, 0, 0);
+}
+
+@media screen and (min-width: 768px) {
+    .classes {
+        flex-direction: column;
+        align-items: center;
+        height: 70vh;
+        width: fit-content;
+        top: 50%;
+        left: 50%;
+        background-color: rgba(255, 255, 255);
+
+        -ms-overflow-style: none;
+        /* IE and Edge */
+        scrollbar-width: none;
+        /* Firefox */
+    }
+
+    /* Hide scrollbar for Chrome, Safari and Opera */
+    .classes::-webkit-scrollbar {
+        display: none;
+    }
+
+
+    .classText {
+        width: 25vw;
+        height: 17vh;
+        margin: 10px 20px 10px 20px;
+        background-color: #f0f0f0;
+        height: auto;
+        border-radius: 5px;
+    }
 }
 </style>

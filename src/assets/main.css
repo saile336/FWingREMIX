@@ -9,7 +9,7 @@ body {
   display: flex;
   justify-content: center;
   align-items: center;
-  font-family: 'Quicksand';
+  font-family: 'Bebas Neue', sans-serif;
 }
 
 * {
