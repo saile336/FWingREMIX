@@ -165,8 +165,8 @@ h2 {
 
 
 .details {
-    font-family: 'Franklin Gothic Medium', 'Arial Narrow', Arial, sans-serif;
-    font-weight: 500;
+    font-family: 'Quicksand';
+    font-weight: 700;
     display: flex;
     flex-direction: column;
     justify-content: center;
@@ -183,13 +183,13 @@ h2 {
 
 .name {
     text-align: center;
-    font-size: 40px;
+    font-size: 30px;
     z-index: 12;
 }
 
 .date {
     text-align: center;
-    font-size: 30px;
+    font-size: 25px;
 
 }
 
