@@ -1,7 +1,4 @@
 <script>
-
-
-
 export default {
   data() {
     return {
@@ -9,29 +6,37 @@ export default {
       country: "Finland",
       weatherDesc: "",
       weatherImg: "",
-      temprature: "",
+      temperature: "",
       wind: "",
       weatherIcon: "",
-      key: "bc91d15720bb809e91f1180be8f3b7ad",
-      //make a secret.Vue and save the Api key there
+      key: "", // API key will be set from localStorage
     };
   },
   methods: {
     getWeather() {
+      // Check if the API key exists in local storage and use it
+      const storedKey = localStorage.getItem('weatherApiKey');
+      if (!storedKey) {
+        console.error('Weather API key is not set.');
+        return;
+      }
+
+      this.key = storedKey;
+
       fetch(
         `https://api.openweathermap.org/data/2.5/weather?&q=${this.city},${this.country}&units=metric&appid=${this.key}`
       )
-        .then((response) => {
-          return response.json();
-        })
+        .then((response) => response.json())
         .then((json) => {
           console.log(json);
           this.weatherDesc = json.weather[0].description;
-          this.temprature = json.main.temp;
+          this.temperature = json.main.temp;
           this.wind = json.wind.speed;
           this.weatherIcon = json.weather[0].icon;
           this.weatherImg =
             "http://openweathermap.org/img/w/" + this.weatherIcon + ".png";
+        }).catch((error) => {
+          console.error('Failed to fetch weather data:', error);
         });
     },
   },
@@ -47,7 +52,7 @@ export default {
     <div>
       <img :src="weatherImg" :alt="weatherDesc" />
       <p>{{ weatherDesc }}</p>
-      <p>Temperature: {{ temprature }}°C</p>
+      <p>Temperature: {{ temperature }}°C</p>
       <p>Wind Speed: {{ wind }} m/s</p>
     </div>
   </div>

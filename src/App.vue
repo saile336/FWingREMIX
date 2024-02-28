@@ -26,6 +26,7 @@ export default {
         // Fetch the logo source from local storage when the component mounts
         this.loadAssociationLogoAndColor();
         this.checkLogin();
+        
     },
     components: {
         TheClock,
@@ -81,6 +82,9 @@ export default {
                 localStorage.setItem('user', JSON.stringify(response.data.user));
                 console.log('Login successful');
 
+                // Save schedule link to local storage
+                localStorage.setItem('scheduleLink', response.data.user.schedule);
+                
                 // Fetch user settings, then update the state
                 this.fetchUserSettings(response.data.user_id)
                     .then(() => {
@@ -103,6 +107,7 @@ export default {
         });
 },
 
+
     registerUser() {
         axios.post('http://localhost:3000/api/addUser', { username: this.enteredUsername })
             .then(response => {
@@ -122,6 +127,15 @@ export default {
             const userSettings = response.data;
             // Update localStorage
             localStorage.setItem('userSettings', JSON.stringify(userSettings));
+
+            // Store weatherApiKey in local storage if it exists
+            if (userSettings.weatherapikey) {
+                localStorage.setItem('weatherApiKey', userSettings.weatherapikey); 
+            }
+
+            if (userSettings.scheduleLink) {
+                localStorage.setItem('scheduleLink', userSettings.scheduleLink);
+            }
 
             // Update state for widgets, diets, and associations
             if (userSettings.widgets) {
@@ -143,6 +157,7 @@ export default {
         .catch(error => {
             console.error('Error fetching user settings:', error);
         });
+        
 },
     
 

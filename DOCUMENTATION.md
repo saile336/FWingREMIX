@@ -4,29 +4,27 @@ The "App" segment of the project primarily focuses on the Vue.js frontend applic
 
 ## Overview
 
-The frontend application is designed as a single-page application (SPA) using Vue.js, leveraging Vue Router for navigation and optionally Vuex for state management, to provide a dynamic and responsive user experience. The application integrates with the backend server via API calls to fetch and manipulate data, including user settings, events, weather, and restaurant menus.
+The frontend application is designed as a single-page application (SPA) using Vue.js to provide a dynamic and responsive user experience. The application integrates with the backend server via API calls to fetch and manipulate data, including user settings, kide events, weather, and restaurant menus.
 ### Project Setup
 
     Framework: Vue.js
-    Routing: Vue Router
     HTTP Requests: Axios for API calls
 
 ### Installation and Running Locally
 
     Ensure Node.js and npm are installed.
     Clone the project repository.
-    Navigate to the client directory.
     Install dependencies:
 
 ```bash
 npm install
 ```
-    Serve the application locally:
+    Run the application locally:
 ```bash
- npm run serve
+ npm run dev
 ```
 
-    The application will be available at http://localhost:8080.
+    The application will be available at http://localhost:5173.
 
 ## Directory Structure
 
@@ -36,40 +34,13 @@ npm install
         App.vue: The main application component that ties everything together.
         main.js: The entry point for the Vue application.
 
-## Navigation with Vue Router
-
-    Configuration: The router is configured in src/router/index.js, defining paths and associated components for the application's routes.
-    Usage: Navigation is achieved using <router-link> for declarative links or this.$router.push('/path') for programmatic navigation.
-    Routes Example:
-
-```javascript
-
-    const routes = [
-      {
-        path: '/',
-        name: 'Home',
-        component: Home
-      },
-      {
-        path: '/settings',
-        name: 'Settings',
-        // Lazy-loaded component
-        component: () => import('../views/Settings.vue')
-      }
-    ];
-```
-## State Management with Vuex (Optional)
-
-    Purpose: Manages application state globally, useful for sharing data between components.
-    Store Setup: Located in src/store/index.js, defines the state, mutations, actions, and getters.
-    Usage: Components access the state directly through $store.state or use mapState helper; mutations and actions are called via $store.commit('mutationName') and $store.dispatch('actionName').
-
 ## Key Components
 
     NavBar: Handles user navigation across different parts of the application.
-    UserSettingsForm: Allows users to update their preferences and settings.
-    WeatherWidget: Displays weather information based on the user's location.
-    EventList: Shows upcoming events fetched from the backend or external APIs.
+    Settings: Allows users to update their preferences and settings.
+    Weather: Displays weather information based on the user's location.
+    FetchKide: Shows upcoming events fetched from the backend.
+    FetchMenu: Shows lunch menus from student restaurants near Arcada.
 
 ## API Integration
 
@@ -88,11 +59,6 @@ npm install
            console.error(error);
          });
 ```
-### Development Practices
-
-    Component Design: Components are designed to be reusable and modular.
-    Code Splitting: Use dynamic imports for routes and components to improve loading times.
-    Environment Variables: Store API URLs and sensitive information in .env files.
 
 ### Security Considerations
 
@@ -106,57 +72,91 @@ npm install
 
 This documentation provides a foundation for understanding and working with the Vue.js frontend part of the application. Further details should be added as the application evolves and new features are implemented.
 
-# Documentation for FetchMenu.vue
+# Documentation for App.vue
+This documentation provides an overview of a Vue component designed for a web application. The component integrates various features such as user authentication, dynamic UI updates based on user settings, and interaction with a backend API for data retrieval and storage.
 
-The FetchMenu.vue component is designed for fetching and displaying restaurant menus. It interacts with a backend or external API to retrieve daily or weekly menus and presents them in a user-friendly format within a Vue.js application. This documentation outlines its core functionalities based on the provided code snippets.
-## Overview
+## Features
 
-FetchMenu.vue serves as a dynamic component within a Vue.js application, aimed at providing users with up-to-date restaurant menus. It is particularly useful for platforms that aggregate food service information, such as university campus apps, food delivery services, or restaurant review sites.
+- **User Authentication**: Supports user login and registration workflows.
+- **Dynamic UI Customization**: Allows users to customize the UI, including association logos and background colors.
+- **Data Fetching and Storage**: Interacts with a backend API to check username availability, login users, register new users, and fetch user-specific settings.
 
+## Components
 
+The main Vue component integrates several child components, each responsible for a specific part of the UI:
+
+- `TheClock`: Displays the current time.
+- `FetchKide`: Fetches and displays data from an external source.
+- `Navbar`: Provides navigation between different pages of the application.
+- `FetchMenu`: Fetches and displays menu items from an external source.
+- `Classes`: Displays class schedules
+- `Settings`: Allows users to customize their application settings.
+- `Widgets`: Displays user-specific widgets on the homepage.
+
+## Data Properties
+
+- `kideOrg`: Organization key for `FetchKide` component.
+- `currentPage`: Tracks the currently active page.
+- `logoSrc`: Stores the path to the currently selected logo image.
+- `enteredUsername`: Temporary storage for username input during login/registration.
+- `usernameCheckInProgress`: Indicates whether a username check is currently being performed.
+- `usernameExists`: Indicates whether the entered username exists in the database.
+- `isLoggedIn`: Tracks whether the user is currently logged in.
 
 ## Methods
 
-    fetchRestaurants(): This method is crucial for asynchronously fetching the restaurant menus. It would typically set isLoading to true, perform an HTTP GET request to the designated endpoint, process the response to update the menus data property, and handle any errors by updating the error property. Finally, it sets isLoading to false.
+### Authentication
 
-    formatDate(date): A utility method that formats the date for display or as required by the API endpoint for fetching menus.
+- `checkLogin()`: Checks if the user is already logged in.
+- `promptLogin()`: Prompts the user to enter their username for login.
+- `loginUser()`: Attempts to log in the user with the entered username.
+- `registerUser()`: Registers a new user with the entered username.
+
+### User Settings and UI Customization
+
+- `fetchUserSettings(user_id)`: Fetches and applies user-specific settings.
+- `updatePage(page)`: Updates the current page view.
+- `updateAssociation(associationKey)`: Updates the UI based on the selected association.
+- `loadAssociationLogoAndColor()`: Loads and applies the association-specific logo and color scheme from local storage.
+
+### Utility
+
+- `isMobile()`: Checks if the application is being accessed from a mobile device.
+
+## Lifecycle Hooks
+
+- `mounted()`: Performs initial setup tasks such as loading the association logo and checking login status.
+
+## Watchers
+
+Watchers are used to reactively update the UI based on changes to certain data properties:
+
+- `associationColor`: Updates the background color when the association color changes.
+- `secondColor`: Updates the navigation color when the secondary color changes.
+
+
+# Documentation for FetchMenu.vue
+
+The FetchMenu.vue component is designed for fetching and displaying restaurant menus. It interacts with the backend, which in turn fetches from the restaurants own APIs to retrieve daily or weekly menus and presents them in a user-friendly format within a Vue.js application. This documentation outlines its core functionalities based on the provided code snippets.
+
+## Methods
+
+    fetchRestaurants(): This method is crucial for asynchronously fetching the restaurant menus. Updates the isDataFetched property to true upon completion, which lets Vue render the component.
+
+    formatDate(date): A utility method that formats the date as required by the Unicafe API endpoint for fetching menus.
 
     desiredDateHandler(bim): A method that adjusts the desiredDate based on user interaction, allowing for navigation through different dates' menus.
 
-    findUnicafeDate(list): Specifically designed for handling menu data from Unicafe (a common restaurant choice in Finnish universities), this method finds and processes the date matching the desiredDate.
+    findUnicafeDate(list): Checks unicafe array of objects' dates for date that corresponds to desiredDate, returns index of object with that date.
 
     restaurantSelect(nam): Handles user selection of a specific restaurant from the displayed list, potentially triggering a detailed view of the selected restaurant's menu.
 
     getLunchData(restaurant): Processes and returns the lunch data for a given restaurant, tailored to handle different data structures depending on the restaurant (e.g., Unicafe's unique format).
 
-## Computed Properties and Watchers
-
-The component might employ computed properties or watchers to reactively update the UI based on changes to reactive data properties like menus or desiredDate, although specifics were not provided.
-Example Usage
-
-```html
-
-<template>
-  <div>
-    <FetchMenu :restaurantId="selectedRestaurant" :date="currentDate" />
-  </div>
-</template>
-```
-This example shows how FetchMenu could be used in a parent component, passing in a selectedRestaurant and a currentDate to fetch and display the menu for a specific restaurant and date.
-
-## Conclusion
-
-FetchMenu.vue enhances a Vue.js application by providing dynamic, up-to-date restaurant menu information to users. Through its asynchronous data fetching, careful error handling, and user-friendly display, it serves as a valuable component for any application focusing on food service information dissemination.
-
 
 # Documentation for Weather.vue
 
 Weather.vue is a Vue.js component designed to fetch and display weather information based on a user's location or a specified location. It communicates with a weather API to retrieve current conditions, forecasts, and other relevant meteorological data, presenting it in a user-friendly interface. This documentation outlines its core functionalities based on the provided code snippets.
-## Overview
-
-The component is integral for applications requiring real-time weather data, such as travel apps, event planning platforms, or any application where weather conditions could affect user decisions. It aims to provide concise, accurate, and timely weather information.
-
-
 
 ## Methods
 
@@ -164,91 +164,18 @@ The component is integral for applications requiring real-time weather data, suc
 
     formatWeatherData(response): A utility method to process and format the raw response from the weather API into a more usable structure for the component. This could involve mapping response data to weatherData properties, converting temperature units, or parsing forecast data.
 
-## Example Usage
-
-```html
-
-<template>
-  <div>
-    <Weather location="Helsinki" units="metric" />
-  </div>
-</template>
-```
-In this example, the Weather component is used with the location and units props to fetch and display weather data for Helsinki in metric units.
-Styling
-
-The component is expected to include scoped CSS for styling the presentation of the weather data. This might involve styles for temperature display, condition icons, forecast layouts, and responsive design considerations to ensure readability across devices.
-## Conclusion
-
-Weather.vue provides a dynamic and essential feature for Vue.js applications that benefit from integrating real-time weather information. Through its efficient fetching of weather data, robust error handling, and user-centric display, it significantly enhances user experience in applications where weather conditions are a critical factor.
 
 # Documentation for TheClock.vue
 
-TheClock.vue is a Vue.js component designed to display a real-time clock, showing the current time to users. It typically includes both digital and optional analog representations of the current time. Based on the provided code snippets, this documentation will detail the core functionalities and structure of the component, focusing on its implementation as a digital clock.
-## Overview
-
-The TheClock.vue component is a versatile element suitable for applications requiring time display, such as dashboards, time tracking tools, or any user interface that benefits from showing the current time. Its implementation is focused on providing a lightweight, accurate, and aesthetically pleasing time display.
-### Data Properties
-
-    currentTime: A string that represents the current time. It is formatted according to the user's locale or a specified format, updating in real-time to ensure accuracy.
+TheClock.vue is a Vue.js component designed to display a real-time clock, showing the current time to users.
 
 ### Methods
 
-    updateTime(): This method is responsible for updating the currentTime data property at a set interval (typically every second). It retrieves the current system time, formats it appropriately (e.g., HH:mm:ss for a 24-hour format), and updates the currentTime property to reflect the change.
-
-### Computed Properties
-
-    There might be computed properties for additional time-related information, such as currentDate or timeOfDay (morning, afternoon, evening), depending on the design and requirements of the application. However, based on the provided code, the primary focus is on displaying the current time.
+    TheClock(): This method is responsible for updating the current time at a set interval of 1 second. It retrieves the current system time, formats it appropriately.
 
 ### Lifecycle Hooks
 
-    mounted(): Upon mounting the component, this lifecycle hook initiates the updateTime() method at a regular interval using setInterval(). This ensures that the clock starts and continues to display the current time accurately as long as the component is mounted.
-
-    beforeDestroy(): To prevent memory leaks or performance issues, it's crucial to clear the interval set for updating the time when the component is about to be destroyed. This lifecycle hook is used to clear the interval, ensuring efficient resource management.
-
-## Example Usage
-
-```html
-
-<template>
-  <div class="clock-container">
-    The current time is: {{ currentTime }}
-  </div>
-</template>
-
-<script>
-export default {
-  data() {
-    return {
-      currentTime: null,
-    };
-  },
-  mounted() {
-    this.updateTime();
-    setInterval(this.updateTime, 1000); // Update the time every second
-  },
-  beforeDestroy() {
-    clearInterval(this.intervalId);
-  },
-  methods: {
-    updateTime() {
-      const now = new Date();
-      this.currentTime = now.toLocaleTimeString(); // Adjust format as needed
-    },
-  },
-};
-</script>
-
-<style scoped>
-.clock-container {
-  /* Styling for the clock display */
-}
-</style>
-```
-In this example, TheClock.vue component displays the current time, which updates every second. The updateTime method ensures the displayed time remains accurate, and lifecycle hooks manage the timing interval responsibly.
-## Conclusion
-
-TheClock.vue is a simple yet highly functional component for Vue.js applications, providing users with accurate and real-time clock functionality. It can be customized and extended to include additional time-related features, making it a versatile component for a wide range of applications.
+    mounted(): Upon mounting the component, this lifecycle hook initiates the TheClock() method at a regular interval using setInterval(). This ensures that the clock starts and continues to display the current time accurately as long as the component is mounted.
 
 
 # Documentation for Widgets.vue
@@ -272,22 +199,17 @@ Methods
 ### Lifecycle Hooks
 
 The mounted() lifecycle hook is used to initialize the component when it is mounted. It triggers the retrieval of user preferences and association settings, activating the corresponding widgets and configuring the Kide API fetch accordingly.
-## Conclusion
-
-Widgets.vue provides a modular and extensible solution for managing and displaying widgets within a Vue.js application. By allowing users to customize their dashboard with preferred widgets, it enhances the user experience and makes the application more versatile and adaptable to individual needs.
 
 # Documentation for FetchKide.vue
 
-The FetchKide.vue component is designed to fetch and display event data from the Kide platform. This documentation provides a comprehensive overview of its functionalities, props, methods, and how it integrates within a Vue.js application.
-## Overview
+The FetchKide.vue component is designed to fetch and display Kide event data from the backend.
 
-FetchKide.vue serves as a dynamic component to retrieve and present events from an external API, specifically tailored for the Kide platform. It showcases various events, potentially including information like event names, dates, and locations, and it may offer functionality for user interaction, such as clicking on an event to get more details.
 ### Props
 
 FetchKide.vue accepts two props for customization and control:
 
     bim: A String indicating the organization or category of events to fetch. This prop allows the component to request specific events related to a given organization from the Kide platform.
-    widgetMode: A Boolean that adjusts the display mode of the component. When true, it alters the layout to fit within a widget space, possibly changing its style or the amount of information displayed.
+    widgetMode: A Boolean that adjusts the display mode of the component. When true, it alters the layout to fit within a widget space, changing its style or the amount of information displayed.
 
 ### Data
 
@@ -300,7 +222,7 @@ The component maintains an internal state that includes:
 
 ### Methods
 
-    fetchApi(bim): An asynchronous method that performs an API request to the Kide platform to retrieve events based on the bim prop. Upon receiving the data, it updates kideData and sets isDataFetched to true.
+    fetchApi(bim): An asynchronous method that performs an API request to the backend to retrieve events based on the bim prop. If no bim prop is provided all events are fetched. Upon receiving the data, it updates kideData and sets isDataFetched to true.
     clickHandler(id): A method that is triggered when an event is clicked. It uses the event id to navigate the user to the event's detailed page on the Kide platform.
     getBackgroundColor(forening): Determines the background color for an event element based on the organization (forening) it's associated with. This method returns an object with CSS styles.
 
@@ -321,93 +243,98 @@ The component maintains an internal state that includes:
 <FetchKide :bim="organizationKey" :widgetMode="false" />
 ```
 This usage example demonstrates how to embed the FetchKide component into a parent component, passing the organization key and widget mode as props.
-Conclusion
-
-FetchKide.vue is a versatile component within a Vue.js application, designed to enhance user engagement by dynamically presenting event information from the Kide platform. Through its props, reactive data properties, and methods, it offers a tailored user experience, encouraging interaction with the displayed events.
 
 # Documentation for Classes.vue 
 
-The Classes.vue component, in the context of fetching and displaying a user's schedule, is designed to interface with an external source, typically a backend server, to retrieve and present schedules. This documentation details its structure, functionality, props, methods, and how it interacts within a Vue.js application for the specific purpose of schedule management.
-Overview
-
-Classes.vue is a Vue.js component aimed at dynamically displaying a schedule of classes or events. It is particularly tailored for educational platforms or applications where users need to view a list of their enrolled classes, upcoming events, or similar scheduled activities. The component fetches data asynchronously and renders a user-friendly view of the schedule.
-
-
-### Methods
-
-    fetchClasses(): This method is responsible for asynchronously fetching the schedule data from an external API. Upon invocation, it sets isLoading to true, makes a request to the designated endpoint (using Axios or a similar HTTP client), processes the response to update the classes data property, and handles any errors encountered by updating the error property. It finally sets isLoading to false.
-
-    parseIcal(): Given the mention of iCal format in the context, this method likely parses iCal data received from the backend into a more usable format for the component. This might involve converting the iCal data into an array of class/event objects with fields like startDate, endDate, summary, and location.
-
-    formatTime() and formatEndTime(): These helper methods format date and time strings for display within the component, ensuring consistency and readability of schedule timings.
-
-## Example Usage
-
-```html
-
-<template>
-  <div class="schedule">
-    <Classes v-if="!isLoading && classes.length" :userId="currentUser.id" />
-    <p v-if="isLoading">Loading your schedule...</p>
-    <p v-if="error">An error occurred: {{ error }}</p>
-  </div>
-</template>
-```
-This example demonstrates how to conditionally render the Classes.vue component, showing loading feedback and handling errors. It assumes the existence of a currentUser object with an id property.
-
-## Conclusion
-
-Classes.vue, within the schedule-fetching context, is a vital component for educational or event-based applications, providing users with a clear and interactive view of their schedules. Through its asynchronous data fetching, error handling, and user-friendly display, it enhances the overall user experience by keeping individuals informed and organized.
-
-
-# Documentation for User Settings Component in Vue.js
-
-This document provides comprehensive details on the AddScheduleButton Vue.js component, designed for managing user preferences including schedule links, dietary restrictions, widgets, and associations within a web application.
+The Classes.vue component, in the context of fetching and displaying a user's schedule, is designed to interface with an external source, to retrieve and present schedules. This documentation details its structure, functionality, props, methods, and how it interacts within a Vue.js application for the specific purpose of schedule management.
 
 ## Overview
 
-The AddScheduleButton component allows users to customize their experience by selecting dietary preferences, widgets, and associations. It features a dynamic UI where users can add links to their schedules, choose dietary restrictions, select up to two widgets for their dashboard, and associate themselves with groups or organizations.
+
+
+
+### Features
+
+- **iCal Parsing**: Utilizes the `ical` library to parse .ics files and extract event data.
+- **Dynamic Event Display**: Shows events for the current day, including course name, start time, end time, and location.
+- **Local Storage Integration**: Retrieves the iCal feed link from local storage for use in fetching the .ics file.
+
+### Data Properties
+
+- `link`: The URL of the .ics file to parse, initially set to an empty string.
+- `courses`: An array to store the events for the current day after parsing.
+
+### Methods
+    `fetchClasses():` This method is responsible for asynchronously fetching the schedule data from an external API. Upon invocation, it sets isLoading to true, makes a request to the designated endpoint (using Axios or a similar HTTP client), processes the response to update the classes data property, and handles any errors encountered by updating the error property. It finally sets isLoading to false.
+
+    `parseIcal():` Given the mention of iCal format in the context, this method likely parses iCal data received from the backend into a more usable format for the component. This might involve converting the iCal data into an array of class/event objects with fields like startDate, endDate, summary, and location.
+
+    `formatTime()` and formatEndTime(): These helper methods format date and time strings for display within the component, ensuring consistency and readability of schedule timings.
+### parseIcal
+
+Asynchronously fetches and parses the .ics file specified by the `link` property. It filters the events to find those occurring on the current day and stores relevant details in the `courses` array.
+
+- Checks local storage for a stored iCal link.
+- Fetches the .ics file and parses it using the `ical` library.
+- Filters events for the current day and with a specified location.
+- Stores event details in the `courses` array.
+
+### formatTime
+
+Formats the start time of an event to a more readable format (`HH:MM`).
+
+- `startDate`: The start date and time of an event.
+
+### formatEndTime
+
+Formats the end time of an event to a more readable format (`HH:MM`), adjusting for differences in time representation.
+
+- `endTime`: The end time of an event in `HH.MM` format.
+
+
+### mounted
+
+Calls the `parseIcal` method to fetch and parse the .ics file upon component mounting. Includes error handling for potential failures in parsing.
+
+## Template
+
+The template section includes dynamic rendering of today's events, displaying the course name, start and end times, and location for each. It uses the `v-for` directive to iterate over the `courses` array and display each event's details.
+
+# Documentation for Settings.vue
+
+This document provides comprehensive details on the AddScheduleButton Vue.js component, designed for managing user preferences including schedule links, dietary restrictions, widgets, and associations within a web application.
 
 ## Features
 
-    Add Schedule Links: Users can add a link to their personal or professional schedules.
-    Dietary Preferences: Users can select their dietary restrictions from a predefined list.
-    Widget Selection: Users can choose up to two widgets to be displayed on their dashboard.
-    Association Membership: Users can select their affiliation with groups or organizations from a list.
+    `AddScheduleLinks:` Users can add a link to their personal or professional schedules.
+    `DietaryPreferences:` Users can select their dietary restrictions from a predefined list.
+    `WidgetSelection:` Users can choose up to two widgets to be displayed on their dashboard.
+    `Association:` Users can select their affiliation with groups or organizations from a list inorder to dispaly the correct color and logo.
+    It works by saving the information to localStorage and then uploading it to the server, it's done this way becuse we neither got sensitive data to hide nor was the project started with a server.
 
-## Component Structure
-## Template
-
-The template consists of multiple button-triggered actions for showing input fields and menus for schedules, diets, widgets, and associations. Each section has its UI elements that are conditionally rendered based on user interactions.
 
 ## Script
 
 Data Properties
 
-    inputVisible: Controls the visibility of the schedule link input field.
-    link: Temporarily stores the user's schedule link.
-    showDietOptions, showWidgetOptions, showAssociationOptions: Control the visibility of their respective menus.
-    diets, widgets, associations: Objects that store the user's selections for each category.
+    `inputVisible: Controls the visibility of the schedule link input field.`
+    `link: Temporarily stores the user's schedule link.`
+    `showDietOptions, showWidgetOptions, showAssociationOptions: Control the visibility of their respective menus.`
+    `diets, widgets, associations: Objects that store the user's selections for each category.`
 
 Methods
 
-    toggleInputField(): Toggles the visibility of the schedule link input field.
-    saveLink(): Saves the schedule link to localStorage and resets the input field.
-    toggleDietOptions(), toggleWidgetOptions(), toggleAssociationOptions(): Toggle the visibility of their respective option menus.
-    selectDiet(diet), selectWidget(widget), selectAssociation(association): Handle selection logic for diets, widgets, and associations, including saving these preferences to localStorage.
-    countSelectedWidgets(): Counts the number of widgets selected by the user.
-    updateUserSettings(): Updates user settings on the backend via an API call.
+    `toggleInputField():` Toggles the visibility of the schedule link input field.
+    `saveLink():` Saves the schedule link to localStorage and resets the input field.`
+    `toggleDietOptions(),` toggleWidgetOptions(), toggleAssociationOptions(): Toggle the visibility of their respective option menus.
+    `selectDiet(diet),` selectWidget(widget), selectAssociation(association): Handle selection logic for diets, widgets, and associations,` including saving these preferences to localStorage.
+    `countSelectedWidgets():` Counts the number of widgets selected by the user.
+    `updateUserSettings():` Updates user settings on the backend via an API call.
 
 Lifecycle Hooks
 
-    mounted(): On component mount, loads saved settings from localStorage and updates component state accordingly.
+    `mounted(): On component mount, loads saved settings from localStorage and updates component state accordingly.`
 
-Style
-
-Scoped CSS provides styles for the component, ensuring a responsive and user-friendly interface. It includes styles for buttons, input fields, and option menus, with active state styles for selections.
-Usage
-
-To use this component, include it within a parent component or Vue application. Ensure the backend endpoint for updating user settings (http://localhost:3000/api/updateUserSettings) is correctly configured to handle PUT requests as per the component's updateUserSettings method.
 
 ```html
 <template>
@@ -432,85 +359,75 @@ export default {
 The component makes a PUT request to update user settings. Ensure your backend is configured to receive JSON payloads and update user settings accordingly. The request includes user_id, widgets, diets, and associations as part of the request body.
 Security Considerations
 
-    Validate all inputs on the backend to prevent SQL injection and other common web vulnerabilities.
-    Do not store sensitive information in localStorage as it's accessible through client-side scripts.
 
 # Documentation for server.js
 
 server.js is the main server file for the application, responsible for handling HTTP requests, managing database connections, and orchestrating data fetching operations.
-## Dependencies
+## Setup and Configuration
 
-    dotenv: Used to load environment variables from a .env file.
-    express: A web application framework for Node.js, utilized for building the server.
-    body-parser: Middleware to parse incoming request bodies in a middleware before handlers, allowing easier access to request data.
-    cors: Middleware to enable Cross-Origin Resource Sharing (CORS), allowing restricted resources on a web page to be requested from another domain.
+### Dependencies
 
-## Initialization
+- `dotenv`: Loads environment variables from a `.env` file.
+- `express`: Web application framework for Node.js.
+- `body-parser`: Middleware to parse incoming request bodies.
+- `cors`: Middleware to enable Cross-Origin Resource Sharing.
+- `pg`: PostgreSQL client for Node.js.
 
-    Loads environment variables from a .env file using dotenv.
-    Initializes an Express application.
-    Defines the port number (3000) for the server to listen on.
-    Configures CORS middleware to allow requests from the specified Vue application URL (http://localhost:5173) and enables credentials.
+### Environment Configuration
 
-## Routes
+Environment variables are configured through a `.env` file located in the parent directory. These variables include database connection parameters and potentially other sensitive configurations.
 
-    Test Route (/api/test):
-        Responds with a JSON object containing a test message ("Hello from the server!") to verify server connectivity.
+## Middleware
 
-    Database Connection:
-        Establishes a connection to a PostgreSQL database using the pg module.
-        Tests the database connection by executing a query to retrieve the current timestamp.
+- **CORS**: Configured to allow requests from the development server running the Vue application. This setup might require adjustment when deploying the server to handle different origins.
+- **Body Parser**: Parses JSON request bodies, enabling the server to easily retrieve request data.
 
-    Update Data Route (PUT /api/update):
-        Allows updating data in the database by sending a PUT request with parameters id and newField.
-        Executes a SQL UPDATE query on the database table myTable based on the provided parameters.
+## Database Connection
 
-    Get Data Route (GET /api/get):
-        Retrieves data from the database by sending a GET request.
-        Executes a SQL SELECT query to fetch all records from the myTable table.
+Utilizes the `pg` module to connect to a PostgreSQL database using environment variables for connection details. Includes a test query to verify the connection upon server start.
 
-    Create Table Query:
-        Defines a SQL query to create a table named user_settings if it doesn't already exist.
-        Executes the create table query to ensure the table's existence in the database.
+## API Endpoints
 
-    Get User Settings Route (GET /api/getUserSettings/:user_id):
-        Retrieves user settings from the database based on the provided user_id.
-        Executes a SQL SELECT query to fetch user settings from the user_settings table.
+### Test Endpoint
 
-    Check Username Route (GET /api/checkUsername/:username):
-        Checks if a username exists in the database.
-        Sanitizes the provided username to ensure it meets certain format requirements.
-        Executes a SQL SELECT query to check for the existence of the username.
+- `GET /api/test`: Returns a simple message indicating that the server is operational.
 
-    User Login Route (POST /api/login):
-        Handles user login by checking if the provided username exists in the database.
-        Executes a SQL SELECT query to find a matching username.
+### User Settings
 
-    Add User Route (POST /api/addUser):
-        Adds a new user to the database.
-        Executes a SQL INSERT query to insert a new user record into the user_settings table.
+- `GET /api/getUserSettings/:user_id`: Retrieves user settings based on the provided user ID.
+- `POST /api/addUser`: Adds a new user with the specified username.
+- `POST /api/login`: Authenticates a user based on the provided username.
+- `PUT /api/updateUserSettings`: Updates user settings for widgets, diets, and associations based on the provided user ID.
 
-    Update User Settings Route (PUT /api/updateUserSettings):
-        Updates user settings in the database.
-        Executes a SQL UPDATE query to modify user settings based on the provided parameters (user_id, widgets, diets, associations).
+### Username Checks
 
-    Fetch Kide Data:
-        Defines an object orgs containing URLs for fetching data from different organizations via the Kide API.
-        Implements a function fetchKide() to fetch data from Kide for each organization asynchronously.
-        Runs fetchKide() on startup and refreshes data every hour using setInterval.
+- `GET /api/checkUsername/:username`: Checks if the provided username exists in the database.
 
-    Kide Routes:
-        Provides routes to fetch all Kide data and specific Kide data by organization name.
+### Data Manipulation Templates
 
-    Restaurant Data Fetching:
-        Defines an object restaurants containing URLs for fetching restaurant menus.
-        Implements a function fetchRestaurants() to fetch menu data for each restaurant asynchronously.
+- `PUT /api/update`: Template endpoint for updating database records.
+- `GET /api/get`: Template endpoint for fetching data from the database.
 
-    Menu Routes:
-        Provides routes to fetch all restaurant menu data and specific menu data by restaurant name.
+### Kide Data Fetching
 
-Server Initialization
+- `GET /api/getKide`: Fetches data for all organizations from Kide API.
+- `GET /api/getKide/:name`: Fetches data for a specific organization from Kide API.
 
-    Starts the Express server, listening on the specified port (3000).
-    Logs a message indicating that the server is running and listening for incoming requests.
+### Restaurant Menu Fetching
 
+- `GET /api/getMenu`: Fetches menus for all configured restaurants.
+- `GET /api/getMenu/:restaurant`: Fetches the menu for a specific restaurant.
+
+## Utility Functions
+
+### fetchKide
+
+Periodically fetches data from the Kide API for predefined organizations and updates the server's local cache of this data.
+
+### fetchRestaurants
+
+Fetches daily menus from predefined restaurant APIs and stores them in the server's local cache.
+
+## Running the Server
+
+The server is configured to listen on port 3000, with console output confirming the server's operational status and successful database connection.
