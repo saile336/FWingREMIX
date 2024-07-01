@@ -3,17 +3,44 @@
 export default {
     data() {
         return {
-            backEndURL: "http://localhost:3000/api/getKide/",
             kideData: {
 
 
             },
             imgUrl: "https://portalvhdsp62n0yt356llm.blob.core.windows.net/bailataan-mediaitems/",
-            qr: "https://kide.app/events/",
             isDataFetched: false,
+            orgs: {
+                TLK:
+                {
+                    kideUrl: "https://api.kide.app/api/companies/8216a1bc-760d-407b-9c77-5e26a041a25c",
+                    kideData: {}
+                },
+
+                HanSe:
+                {
+                    kideUrl: "https://api.kide.app/api/companies/90d58532-87be-4a30-b4e3-6053db20caa5",
+                    kideData: {}
+                },
+
+                Hosk: {
+                    kideUrl: "https://api.kide.app/api/companies/45719a1d-a1ef-44a5-ab61-3d81f23614b5",
+                    kideData: {}
+                },
+
+                Commedia:
+                {
+                    kideUrl: "https://api.kide.app/api/companies/b7b04c01-6c49-4c74-81da-9f4147aca6db",
+                    kideData: {}
+                },
+
+                Kult:
+                {
+                    kideUrl: "https://api.kide.app/api/companies/d12f83ed-8efa-40d9-8288-e62f1ac8fc43",
+                    kideData: {}
+                }
+            }
         }
     },
-
 
     props: {
         bim: String,
@@ -21,13 +48,22 @@ export default {
     },
 
     methods: {
-        async fetchApi(bim) {
-            console.log("fetchApi()");
-            const res = await fetch(this.backEndURL + bim);
-            const data = await res.json();
-            this.kideData = data;
-            this.isDataFetched = true;
-            console.log(this.kideData);
+        async fetchKide() {
+            console.log("fetchKide()");
+
+            try {
+                for (const org in this.orgs) {
+                    await fetch(this.orgs[org].kideUrl)
+                        .then(res => res.json())
+                        .then(data => {
+                            this.orgs[org].kideData = data;
+                        })
+                }
+            }
+
+            catch (error) {
+                console.log("Could not fetch kide, " + error);
+            }
         },
 
         clickHandler(id) {
@@ -76,7 +112,9 @@ export default {
 
     },
     mounted() {
-        this.fetchApi(this.bim);
+        this.fetchKide().then(() => {
+            this.isDataFetched = true;
+        })
     },
 
 }
@@ -84,7 +122,8 @@ export default {
 </script>
 
 <template>
-    <div id="events" v-if="isDataFetched" :style="[widgetMode == true ? {'position': 'static', 'height': '50vh', 'transform':'translate(0, 0)'} : {}]">
+    <div id="events" v-if="isDataFetched"
+        :style="[widgetMode == true ? { 'position': 'static', 'height': '50vh', 'transform': 'translate(0, 0)' } : {}]">
         <div class='föreningar' v-for="forening in kideData" :key="forening">
             <div class="event" v-for="event in forening.kideData.model.events" :key="event.id"
                 :style="getBackgroundColor(event.companyName)" @click="clickHandler(event.id)">

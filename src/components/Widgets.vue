@@ -1,8 +1,6 @@
 <template>
     <div class="Widgets">
 
-        <Weather v-if="widgets.weather" />
-
         <div v-if="widgets.schedule">
             <p>schema</p>
         </div>
@@ -18,7 +16,6 @@
   
 <script>
 import FetchKide from "./FetchKide.vue";
-import Weather from "./Weather.vue";
 
 export default {
     data() {
@@ -27,14 +24,12 @@ export default {
                 schedule: false,
                 menu: false,
                 events: false,
-                weather: false,
             },
             kideOrg: "TLK", // Default value
         };
     },
     components: {
         FetchKide,
-        Weather,
     },
     methods: {
         switchWidget(widgetName, isActive) {
