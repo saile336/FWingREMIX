@@ -48,7 +48,7 @@ export default {
     },
 
     methods: {
-        async fetchKide() {
+        async fetchKide(bim) {
             console.log("fetchKide()");
 
             try {
@@ -59,17 +59,12 @@ export default {
                             this.orgs[org].kideData = data;
                         })
                 }
+                this.isDataFetched = true;
             }
 
             catch (error) {
                 console.log("Could not fetch kide, " + error);
             }
-        },
-
-        clickHandler(id) {
-            console.log("clickHandler()");
-            console.log(id);
-            window.open("https://kide.app/events/" + id, "_self");
         },
 
         getBackgroundColor(forening) {
@@ -112,9 +107,7 @@ export default {
 
     },
     mounted() {
-        this.fetchKide().then(() => {
-            this.isDataFetched = true;
-        })
+        this.fetchKide()
     },
 
 }
@@ -124,17 +117,19 @@ export default {
 <template>
     <div id="events" v-if="isDataFetched"
         :style="[widgetMode == true ? { 'position': 'static', 'height': '50vh', 'transform': 'translate(0, 0)' } : {}]">
-        <div class='föreningar' v-for="forening in kideData" :key="forening">
+        <div class='föreningar' v-for="forening in orgs" :key="forening">
             <div class="event" v-for="event in forening.kideData.model.events" :key="event.id"
-                :style="getBackgroundColor(event.companyName)" @click="clickHandler(event.id)">
-                <div class="image-container">
-                    <img class="img" :src="imgUrl + event.mediaFilename" />
-                    <div :style="[event.salesStarted === true ? event.salesOngoing === false ? { 'color': '#820000' } : { 'color': '#277027' } : {}]"
-                        class="details">
-                        <div class="name">{{ event.name }}</div>
-                        <div class="date">{{ new Date(event.dateActualFrom).toLocaleDateString('fi-FI') }}</div>
+                :style="getBackgroundColor(event.companyName)">
+                <a :href="['https://kide.app/events/' + event.id]">
+                    <div class="image-container">
+                        <img class="img" :src="imgUrl + event.mediaFilename" />
+                        <div class="details" :style="[event.salesStarted === true ? event.salesOngoing === false ? { 'background-color': 'rgba(255,255,255,0.7)' } : {/* Försäljning startad inte avslutad */} : {/* Inte startad inte avslutad */}]">
+                            <!--<div class="name">{{ event.name }}</div>
+                        <div class="date">{{ new Date(event.dateActualFrom).toLocaleDateString('fi-FI') }}</div>-->
+                        </div>
                     </div>
-                </div>
+                </a>
+
             </div>
         </div>
     </div>
@@ -170,24 +165,39 @@ h2 {
     position: absolute;
     top: 50%;
     left: 50%;
-    transform: translate(-50%, -55%);
+    transform: translate(-50vw, -50vh);
     display: flex;
     flex-direction: column;
-    border-radius: 15px;
     overflow-y: scroll;
     overflow-x: hidden;
-    height: 80vh;
-    width: 85vw;
-    background-color: white;
-    padding: 10px 0 10px 0;
+    padding: 2vh 0 2vh 0;
+    height: 90vh;
+    width: 100vw;
+    gap: 15px;
+
+    .föreningar {
+        background-color: rgba(68, 71, 164, .7);
+        border-radius: 20px;
+        width: fit-content;
+        height: auto;
+        margin: 0 auto 0 auto;
+    }
+
+    .föreningar:empty {
+        display: none;
+
+    }
 }
 
 .event {
-    border-radius: 10px;
+    border-radius: 15px;
     overflow: hidden;
     height: 150px;
-    margin: 10px 20px 10px 20px;
-    border: 5px solid;
+    margin: 10px;
+    /*border: 5px solid;*/
+    width: 85vw;
+    height: auto;
+    cursor: pointer;
 }
 
 .image-container {
@@ -212,7 +222,6 @@ h2 {
     align-items: center;
     gap: 0;
     line-height: 1;
-    background-color: rgba(255, 255, 255, 0.6);
     position: absolute;
     bottom: 0;
     width: 100%;
@@ -260,7 +269,6 @@ h2 {
         width: 25vw;
         height: 17vh;
         border: 5px solid;
-        margin: 10px 20px 10px 20px;
     }
 
     .event:hover {
@@ -288,7 +296,7 @@ h2 {
         transform: translate(0, -55%);
         display: flex;
         flex-direction: column;
-        border-radius: 15px;
+        border-radius: 20px;
         overflow-y: hidden;
         overflow-x: hidden;
         width: calc(25vw + 40px);

@@ -46,7 +46,7 @@ export default {
     bottom: 0;
     left: 0;
     width: 100%;
-    height: 10%;
+    height: 10vh;
     background-color: #ffffff;
     justify-content: space-evenly;
     align-items: center;
@@ -73,6 +73,6 @@ export default {
     max-width: 100px;
     height: 45%;
     padding: 15px;
-    border-radius: 10px;
+    border-radius: 15px;
 }
 </style>
