@@ -129,7 +129,6 @@ export default {
                         </div>
                     </div>
                 </a>
-
             </div>
         </div>
     </div>
@@ -167,6 +166,7 @@ h2 {
     left: 50%;
     transform: translate(-50vw, -50vh);
     display: flex;
+    align-items: center;
     flex-direction: column;
     overflow-y: scroll;
     overflow-x: hidden;
@@ -180,7 +180,6 @@ h2 {
         border-radius: 20px;
         width: fit-content;
         height: auto;
-        margin: 0 auto 0 auto;
     }
 
     .föreningar:empty {
@@ -196,6 +195,7 @@ h2 {
     margin: 10px;
     /*border: 5px solid;*/
     width: 85vw;
+    max-width: 400px;
     height: auto;
     cursor: pointer;
 }
@@ -244,18 +244,12 @@ h2 {
 /* CSS Desktop */
 @media screen and (min-width: 768px) {
     #events {
-        flex-direction: column;
-        align-items: center;
-        height: 70vh;
-        width: fit-content;
-        top: 50%;
-        left: 50%;
-        background-color: rgba(255, 255, 255);
-
         -ms-overflow-style: none;
         /* IE and Edge */
         scrollbar-width: none;
         /* Firefox */
+
+
     }
 
     /* Hide scrollbar for Chrome, Safari and Opera */
@@ -263,70 +257,30 @@ h2 {
         display: none;
     }
 
-
     .event {
-        overflow: hidden;
-        width: 25vw;
-        height: 17vh;
-        border: 5px solid;
-    }
-
-    .event:hover {
-        cursor: pointer;
-        scale: 1.05;
-        transition: .1s;
-    }
-
-    .name {
-        text-align: center;
-        font-size: 35px;
-        z-index: 12;
-    }
-
-    .date {
-        text-align: center;
-        font-size: 25px;
+        width: 35vw;
 
     }
 
-    #hoverCont {
-        position: absolute;
-        top: 50%;
-        left: 50%;
-        transform: translate(0, -55%);
-        display: flex;
-        flex-direction: column;
+    #events {
+    
+    display: flex;
+    flex-direction: row;
+    overflow-y: scroll;
+    overflow-x: scroll;
+    padding: 2vh 0 2vh 0;
+    height: 90vh;
+    width: 100vw;
+    gap: 15px;
+
+    .föreningar {
+        background-color: rgba(68, 71, 164, .7);
         border-radius: 20px;
-        overflow-y: hidden;
-        overflow-x: hidden;
-        width: calc(25vw + 40px);
-        background-color: white;
+        width: fit-content;
         height: fit-content;
-        opacity: 0;
-        transition: .1s;
+        margin: auto auto auto auto;
     }
+}
 
-    .hoverImg {
-        display: block;
-        width: 100%;
-        height: auto;
-    }
-
-    .hoverDetails {
-        font-family: 'Gill Sans', 'Gill Sans MT', Calibri, 'Trebuchet MS', sans-serif;
-        font-weight: 500;
-        display: flex;
-        flex-direction: column;
-        justify-content: center;
-        align-items: center;
-        gap: 0;
-        line-height: 1;
-        background-color: rgba(255, 255, 255, 0.6);
-        position: absolute;
-        bottom: 0;
-        width: 100%;
-        height: 100%;
-        overflow: hidden;
-    }
 }
 </style>
