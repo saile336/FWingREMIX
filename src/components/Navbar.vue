@@ -34,7 +34,7 @@ export default {
     <div id="navbar">
         <img v-for="page in pages" :key="page" :id="page" @click="navbarHandler(page)"
             :src="'src/assets/images/navbar/' + page + '.svg'"
-            :style="[page == this.page ? { 'border': 'solid black' } : {}]" :alt="page">
+            :style="[page == this.page ? { 'border': 'solid #7e7e7e' } : {}]" :alt="page">
     </div>
 </template>
 
@@ -50,7 +50,6 @@ export default {
     background-color: #ffffff;
     justify-content: space-evenly;
     align-items: center;
-    box-shadow: 1;
     -webkit-box-shadow: 0px 2px 5px 5px rgba(0, 0, 0, 0.2);
     -moz-box-shadow: 0px 2px 5px 5px rgba(0, 0, 0, 0.2);
     box-shadow: 0px 2px 5px 5px rgba(0, 0, 0, 0.2);
